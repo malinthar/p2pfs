@@ -1,51 +1,74 @@
 package io.viro.p2pfs.telnet;
 
+import io.viro.p2pfs.Constant;
+import io.viro.p2pfs.Node;
+import io.viro.p2pfs.telnet.message.Message;
+import io.viro.p2pfs.telnet.message.RegisterRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-public class TelnetClient {
-    private static TelnetClient INSTANCE = new TelnetClient();
-    DatagramSocket sock = null;
+/**
+ * Communication client for each node.
+ */
+public class TelnetClient implements Runnable {
+    private DatagramSocket socket;
+    private Node node;
+    private String bootstrapServerIP;
+    private int bootstrapServerPort;
 
-    private TelnetClient() { }
+    private static final Logger logger = LoggerFactory.getLogger(TelnetClient.class);
 
-    public static TelnetClient getInstance() {
-        return INSTANCE;
+    public TelnetClient(Node node, String bootstrapServerIp, int bootstrapServerPort) {
+        this.node = node;
+        this.bootstrapServerIP = bootstrapServerIp;
+        this.bootstrapServerPort = bootstrapServerPort;
+        init();
+    }
+
+    public void run() {
+        try {
+            logger.info("New node created at" + node.getPort() + ". Waiting for incoming data...");
+            String messege;
+            while (true) {
+                byte[] buffer = new byte[65536];
+                DatagramPacket incoming = new DatagramPacket(buffer, buffer.length);
+                socket.receive(incoming);
+                byte[] data = incoming.getData();
+                messege = new String(data, 0, incoming.getLength());
+                logger.info(incoming.getAddress().getHostAddress() + " : " +
+                        incoming.getPort() + " - " + messege);
+            }
+        } catch (IOException e) {
+            //echo(e.getMessage());
+        }
     }
 
     public void init() {
         try {
-            sock = new DatagramSocket(55556);
-            String s;
-            echo("New node created at 55556. Waiting for incoming data...");
-
-            while (true) {
-                byte[] buffer = new byte[65536];
-                DatagramPacket incoming = new DatagramPacket(buffer, buffer.length);
-                sock.receive(incoming);
-                byte[] data = incoming.getData();
-                s = new String(data, 0, incoming.getLength());
-                echo(incoming.getAddress().getHostAddress() + " : " + incoming.getPort() + " - " + s);
-            }
-        } catch (IOException e) {
-            echo(e.getMessage());
+            socket = new DatagramSocket(this.node.getPort());
+        } catch (Exception e) {
+            new Thread(this).start();
         }
     }
 
     public void registerNode() {
         try {
-            String reply = "REG 129.82.123.45 5001 1234abcd";
-            reply = String.format("%04d", reply.length() + 5) + " " + reply;
-            DatagramPacket dpReply = new DatagramPacket(reply.getBytes(), reply.getBytes().length, InetAddress.getByName("localhost"), 55555);
-            sock.send(dpReply);
+            Message message = new RegisterRequest(this.node.getIp(), this.node.getPort(),
+                    this.node.getUsername());
+            String messageString = String.format("%04d", message.getMessage().length() + 5) +
+                    Constant.SEPARATOR + message.getMessage();
+            DatagramPacket datagramPacket = new DatagramPacket(messageString.getBytes(),
+                    messageString.getBytes().length,
+                    InetAddress.getByName(this.bootstrapServerIP), this.bootstrapServerPort);
+            socket.send(datagramPacket);
         } catch (IOException e) {
-            echo(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 
-    public static void echo(String msg) {
-        System.out.println(msg);
-    }
 }
