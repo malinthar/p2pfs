@@ -2,6 +2,7 @@ package io.viro.p2pfs.telnet;
 
 import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.Node;
+import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.message.Message;
 import io.viro.p2pfs.telnet.message.RegisterRequest;
 import org.slf4j.Logger;
@@ -15,24 +16,24 @@ import java.net.InetAddress;
 /**
  * Communication client for each node.
  */
-public class TelnetClient implements Runnable {
+public class P2PFSClient implements Runnable {
     private DatagramSocket socket;
     private Node node;
-    private String bootstrapServerIP;
-    private int bootstrapServerPort;
+    NodeCredentials bootstrapServer;
+    P2PFSMessageProcessor processor;
 
-    private static final Logger logger = LoggerFactory.getLogger(TelnetClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(P2PFSClient.class);
 
-    public TelnetClient(Node node, String bootstrapServerIp, int bootstrapServerPort) {
+    public P2PFSClient(Node node, NodeCredentials bootstrapServer) {
         this.node = node;
-        this.bootstrapServerIP = bootstrapServerIp;
-        this.bootstrapServerPort = bootstrapServerPort;
+        this.bootstrapServer = bootstrapServer;
+        this.processor = new P2PFSMessageProcessor(this);
         init();
     }
 
     public void run() {
         try {
-            logger.info("New node created at" + node.getPort() + ". Waiting for incoming data...");
+            logger.info("New node created at" + node.getCredentials().getPort() + ". Waiting for incoming data...");
             String messege;
             while (true) {
                 byte[] buffer = new byte[65536];
@@ -42,33 +43,36 @@ public class TelnetClient implements Runnable {
                 messege = new String(data, 0, incoming.getLength());
                 logger.info(incoming.getAddress().getHostAddress() + " : " +
                         incoming.getPort() + " - " + messege);
+                this.processor.processMessage(messege,
+                        new NodeCredentials(incoming.getAddress().getHostAddress(), incoming.getPort()));
+
             }
-        } catch (IOException e) {
-            //echo(e.getMessage());
-        }
-    }
-
-    public void init() {
-        try {
-            socket = new DatagramSocket(this.node.getPort());
-        } catch (Exception e) {
-            new Thread(this).start();
-        }
-    }
-
-    public void registerNode() {
-        try {
-            Message message = new RegisterRequest(this.node.getIp(), this.node.getPort(),
-                    this.node.getUsername());
-            String messageString = String.format("%04d", message.getMessage().length() + 5) +
-                    Constant.SEPARATOR + message.getMessage();
-            DatagramPacket datagramPacket = new DatagramPacket(messageString.getBytes(),
-                    messageString.getBytes().length,
-                    InetAddress.getByName(this.bootstrapServerIP), this.bootstrapServerPort);
-            socket.send(datagramPacket);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
+    public void init() {
+        try {
+            socket = new DatagramSocket(this.node.getCredentials().getPort());
+            new Thread(this).start();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    public void registerNode() {
+        try {
+            Message message = new RegisterRequest(this.node.getCredentials().getHost(),
+                    this.node.getCredentials().getPort(), this.node.getCredentials().getUserName());
+            String messageString = String.format("%04d", message.getMessage().length() + 5) +
+                    Constant.SEPARATOR + message.getMessage();
+            DatagramPacket datagramPacket = new DatagramPacket(messageString.getBytes(),
+                    messageString.getBytes().length,
+                    InetAddress.getByName(this.bootstrapServer.getHost()), this.bootstrapServer.getPort());
+            socket.send(datagramPacket);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
 }

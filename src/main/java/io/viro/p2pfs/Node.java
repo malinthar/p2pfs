@@ -1,5 +1,7 @@
 package io.viro.p2pfs;
 
+import io.viro.p2pfs.telnet.credentials.NodeCredentials;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -8,18 +10,14 @@ import java.util.Map;
  * Represents a node.
  */
 public class Node {
-    private String username;
-    private String ip;
-    private int port;
+    NodeCredentials credentials;
     List<String> files;
     List<Map<String, String>> neighbors;
 
-    Node(String username, String ip, int port) {
+    Node(NodeCredentials credentials) {
+        this.credentials = credentials;
         neighbors = new ArrayList<>();
         files = new ArrayList<>();
-        this.ip = ip;
-        this.port = port;
-        this.username = username;
     }
 
     public void addNeighbors(List<Map<String, String>> neighbors) {
@@ -30,16 +28,8 @@ public class Node {
         return this.neighbors;
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public String getUsername() {
-        return username;
+    public NodeCredentials getCredentials() {
+        return credentials;
     }
 
     public List<String> getFiles() {

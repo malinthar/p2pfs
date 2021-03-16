@@ -1,6 +1,7 @@
 package io.viro.p2pfs;
 
-import io.viro.p2pfs.telnet.TelnetClient;
+import io.viro.p2pfs.telnet.P2PFSClient;
+import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +23,10 @@ public class BootstrapNode {
             String nodeUserName = args[2];
             String bootstrapServerIp = args[3];
             int bootstrapServerPort = Integer.parseInt(args[4]);
-            Node node = new Node(nodeUserName, nodeIp, nodePort);
-            TelnetClient client = new TelnetClient(node, bootstrapServerIp, bootstrapServerPort);
+            NodeCredentials credentials = new NodeCredentials(nodeIp, nodePort, nodeUserName);
+            NodeCredentials bootstrapServer = new NodeCredentials(bootstrapServerIp, bootstrapServerPort);
+            Node node = new Node(credentials);
+            P2PFSClient client = new P2PFSClient(node, bootstrapServer);
             client.registerNode();
             while (true) {
                 try {
