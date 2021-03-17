@@ -1,5 +1,6 @@
-package io.viro.p2pfs.telnet;
+package io.viro.p2pfs.telnet.processor;
 
+import io.viro.p2pfs.telnet.P2PFSClient;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,12 @@ public class P2PFSMessageProcessor {
      * @param sender
      */
     public void processMessage(String message, NodeCredentials sender) {
-        logger.info(parser.parseMessage(message));
-        logger.info(client.getClass().toString()); //dummay to avoid findbugs
+        Response response = parser.parseMessage(message);
+        logger.info(client.getClass().toString()); //dummy to avoid findbugs
+        if(response instanceof RegisterResponse) {
+
+        }
     }
+
+
 }

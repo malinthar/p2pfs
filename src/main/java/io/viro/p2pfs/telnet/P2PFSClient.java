@@ -5,6 +5,7 @@ import io.viro.p2pfs.Node;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.message.Message;
 import io.viro.p2pfs.telnet.message.RegisterRequest;
+import io.viro.p2pfs.telnet.processor.P2PFSMessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
