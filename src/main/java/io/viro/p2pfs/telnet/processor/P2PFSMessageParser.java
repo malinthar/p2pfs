@@ -1,7 +1,8 @@
 package io.viro.p2pfs.telnet.processor;
 
-import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +19,13 @@ public class P2PFSMessageParser {
      * @param message
      * @return
      */
+    private static final Logger logger = LoggerFactory.getLogger(P2PFSMessageParser.class);
+
     public Response parseMessage(String message) {
         StringTokenizer st = new StringTokenizer(message, " ");
 
-        String length = st.nextToken();
-        String command = st.nextToken();
+//        String length = st.nextToken();
+//        String command = st.nextToken();
         int numOfNodes = Integer.parseInt(st.nextToken());
         String ip;
         int port;
@@ -31,7 +34,9 @@ public class P2PFSMessageParser {
             ip = st.nextToken();
             port = Integer.parseInt(st.nextToken());
             neighboringNodes.add(new NodeCredentials(ip, port));
+            logger.info(ip, port);
         }
+
         Response response = new RegisterResponse(neighboringNodes);
         return response;
     }

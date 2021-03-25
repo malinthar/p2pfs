@@ -27,10 +27,10 @@ public class P2PFSMessageProcessor {
      */
     public void processMessage(String message, NodeCredentials sender) {
         Response response = parser.parseMessage(message);
-        logger.info(client.getClass().toString()); //dummy to avoid findbugs
-        if(response instanceof RegisterResponse) {
-
-        }
+        logger.info(response.toString()); //dummy to avoid findbugs
+//        if (response instanceof RegisterResponse) {
+//
+//        }
     }
 
 

@@ -76,4 +76,8 @@ public class P2PFSClient implements Runnable {
             logger.error(e.getMessage());
         }
     }
+
+    public void join() {
+
+    }
 }
