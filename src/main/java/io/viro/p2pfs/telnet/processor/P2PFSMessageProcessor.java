@@ -1,5 +1,6 @@
 package io.viro.p2pfs.telnet.processor;
 
+import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.telnet.P2PFSClient;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import org.slf4j.Logger;
@@ -27,9 +28,24 @@ public class P2PFSMessageProcessor {
      */
     public void processMessage(String message, NodeCredentials sender) {
         Response response = parser.parseMessage(message);
-        logger.info(client.getClass().toString()); //dummy to avoid findbugs
-        if(response instanceof RegisterResponse) {
-
+        logger.info(response.toString()); //dummy to avoid findbugs
+        if (response instanceof RegisterResponse) {
+            if (((RegisterResponse) response).getNeighboringNodes() == null) {
+                int errorCode = ((RegisterResponse) response).getErrorCode();
+                if (errorCode == Constant.ALREADY_REGISTERED_TO_ME) {
+                    logger.error("Already registered to this host!");
+                } else if (errorCode == Constant.ALREADY_REGISTERED) {
+                    logger.error("Already registered to another host!");
+                } else if (errorCode == Constant.BS_FULL) {
+                    logger.error("Boostrap Server is full!");
+                } else if (errorCode == Constant.COMMAND_ERROR) {
+                    logger.error("Host error!");
+                } else {
+                    logger.error("Unknown error");
+                }
+            } else {
+                //add neighbors.
+            }
         }
     }
 

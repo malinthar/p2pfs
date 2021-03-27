@@ -2,6 +2,8 @@ package io.viro.p2pfs.telnet.processor;
 
 import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,21 +20,33 @@ public class P2PFSMessageParser {
      * @param message
      * @return
      */
-    public Response parseMessage(String message) {
-        StringTokenizer st = new StringTokenizer(message, " ");
+    private static final Logger logger = LoggerFactory.getLogger(P2PFSMessageParser.class);
 
-        String length = st.nextToken();
-        String command = st.nextToken();
-        int numOfNodes = Integer.parseInt(st.nextToken());
-        String ip;
-        int port;
-        List<NodeCredentials> neighboringNodes = new ArrayList<>();
-        for (int i = 0; i < numOfNodes; i++) {
-            ip = st.nextToken();
-            port = Integer.parseInt(st.nextToken());
-            neighboringNodes.add(new NodeCredentials(ip, port));
+    public Response parseMessage(String message) {
+        StringTokenizer tokenizer = new StringTokenizer(message, " ");
+        String length = tokenizer.nextToken();
+        logger.info("Message length :", length);
+        String command = tokenizer.nextToken();
+
+        if (command.equals(Constant.REGOK)) {
+            int numOfNodes = Integer.parseInt(tokenizer.nextToken());
+            if (Constant.getRegErrorCodes().contains(numOfNodes)) {
+                Response response = new RegisterResponse(numOfNodes);
+                return response;
+            } else {
+                String ip;
+                int port;
+                List<NodeCredentials> neighboringNodes = new ArrayList<>();
+                for (int i = 0; i < numOfNodes; i++) {
+                    ip = tokenizer.nextToken();
+                    port = Integer.parseInt(tokenizer.nextToken());
+                    neighboringNodes.add(new NodeCredentials(ip, port));
+                    logger.info(ip, port);
+                }
+                Response response = new RegisterResponse(neighboringNodes);
+                return response;
+            }
         }
-        Response response = new RegisterResponse(neighboringNodes);
-        return response;
+        return null;
     }
 }
