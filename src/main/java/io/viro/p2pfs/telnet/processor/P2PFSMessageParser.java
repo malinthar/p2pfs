@@ -30,8 +30,9 @@ public class P2PFSMessageParser {
 
         if (command.equals(Constant.REGOK)) {
             int numOfNodes = Integer.parseInt(tokenizer.nextToken());
-            if (Constant.REG_ERROR_CODES.contains(numOfNodes)) {
+            if (Constant.getRegErrorCodes().contains(numOfNodes)) {
                 Response response = new RegisterResponse(numOfNodes);
+                return response;
             } else {
                 String ip;
                 int port;

@@ -13,9 +13,11 @@ public class RegisterResponse extends Response {
 
     public RegisterResponse(List<NodeCredentials> neighboringNodes) {
         this.neighboringNodes = neighboringNodes;
+        this.errorCode = -1;
     }
 
     public RegisterResponse(int errorCode) {
+        this.neighboringNodes = null;
         this.errorCode = errorCode;
     }
 

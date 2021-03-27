@@ -1,6 +1,5 @@
 package io.viro.p2pfs;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,11 +18,13 @@ public class Constant {
     public static final int ALREADY_REGISTERED = 9997;
     public static final int BS_FULL = 9996;
 
-    public static final List<Integer> REG_ERROR_CODES;
+    private static final List<Integer> REG_ERROR_CODES;
+
     static {
-        REG_ERROR_CODES = new ArrayList<>();
-        REG_ERROR_CODES.addAll(Arrays.asList(COMMAND_ERROR, ALREADY_REGISTERED, ALREADY_REGISTERED_TO_ME, BS_FULL));
+        REG_ERROR_CODES = Arrays.asList(COMMAND_ERROR, ALREADY_REGISTERED, ALREADY_REGISTERED_TO_ME, BS_FULL);
     }
 
-
+    public static List<Integer> getRegErrorCodes() {
+        return REG_ERROR_CODES;
+    }
 }
