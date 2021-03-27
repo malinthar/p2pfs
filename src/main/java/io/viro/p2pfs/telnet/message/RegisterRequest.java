@@ -20,7 +20,7 @@ public class RegisterRequest extends Message {
 
     @Override
     public String getMessage() {
-        StringBuilder message = new StringBuilder(Constant.REG_COM);
+        StringBuilder message = new StringBuilder(Constant.REG);
         message.append(Constant.SEPARATOR).append(this.sourceIP).append(Constant.SEPARATOR)
                 .append(this.sourcePORT).append(Constant.SEPARATOR).append(username);
         return message.toString();
