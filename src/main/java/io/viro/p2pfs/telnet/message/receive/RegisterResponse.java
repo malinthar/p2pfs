@@ -1,4 +1,4 @@
-package io.viro.p2pfs.telnet.processor;
+package io.viro.p2pfs.telnet.message.receive;
 
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 
@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Register response.
  */
-public class RegisterResponse extends Response {
+public class RegisterResponse extends ReceivedMessage {
     private List<NodeCredentials> neighboringNodes;
     public int errorCode;
 

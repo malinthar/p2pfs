@@ -1,4 +1,4 @@
-package io.viro.p2pfs.telnet.processor;
+package io.viro.p2pfs.telnet.message.receive;
 
 /**
  * Response.
