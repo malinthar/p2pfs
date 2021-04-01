@@ -1,7 +1,8 @@
 # p2pfs
 A Peer-to-Peer file sharing system
 
-###quick start
+### quick start
+
 Step 1: Clone the repository 
 
 Step 2: Go to project's root directory and use `mvn clean install` to build the project.
