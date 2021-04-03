@@ -4,7 +4,6 @@ import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Represents a node.
@@ -12,19 +11,29 @@ import java.util.Map;
 public class Node {
     NodeCredentials credentials;
     List<String> files;
-    List<Map<String, String>> neighbors;
+    List<NodeCredentials> neighbors;
+    List<NodeCredentials> secondaryNeighbors;
 
     Node(NodeCredentials credentials) {
         this.credentials = credentials;
         neighbors = new ArrayList<>();
+        secondaryNeighbors = new ArrayList<>();
         files = new ArrayList<>();
     }
 
-    public void addNeighbors(List<Map<String, String>> neighbors) {
-        this.neighbors.addAll(neighbors);
+    public void addNeighbor(NodeCredentials neighbor) {
+        this.neighbors.add(neighbor);
     }
 
-    public List<Map<String, String>> getNeighbors() {
+    public void addSecondaryNeighbor(NodeCredentials neighbor) {
+        secondaryNeighbors.add(neighbor);
+    }
+
+    public int getNeighborCount() {
+        return neighbors.size();
+    }
+
+    public List<NodeCredentials> getNeighbors() {
         return this.neighbors;
     }
 

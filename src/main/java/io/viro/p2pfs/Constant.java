@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class Constant {
     public static final String REG = "REG";
+    public static final String JOIN = "JOIN";
     public static final String SEPARATOR = " ";
 
 
@@ -17,6 +18,10 @@ public class Constant {
     public static final int ALREADY_REGISTERED_TO_ME = 9998;
     public static final int ALREADY_REGISTERED = 9997;
     public static final int BS_FULL = 9996;
+
+    public static final String JOINOK = "JOINOK";
+    public static final int JOIN_SUCCESS = 0;
+    public static final int JOIN_ERROR = 9999;
 
     private static final List<Integer> REG_ERROR_CODES;
 
