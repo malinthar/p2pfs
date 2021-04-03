@@ -26,6 +26,67 @@ public class P2PFSMessageParser {
         int numOfNodes = Integer.parseInt(st.nextToken());
         String ip;
         int port;
+        String userName;
+
+        switch (command) {
+            case "REG":
+                ip = st.nextToken();
+                port = Integer.parseInt(st.nextToken());
+                userName = st.nextToken();
+                Credential userCredentials = new Credential(ip, port, username);
+                return new RegisterRequest(userCredentials);
+
+            case "REGOK":
+                int nodeCount = Integer.parseInt(st.nextToken());
+                List<Credential> nodes = new ArrayList<>();
+                if (!(numOfNodes == Constant.Codes.Register.ERROR_CANNOT_REGISTER || numOfNodes == Constant.Codes.Register.ERROR_DUPLICATE_IP ||
+                        numOfNodes == Constant.Codes.Register.ERROR_ALREADY_REGISTERED || numOfNodes == Constant.Codes.Register.ERROR_COMMAND)) {
+                    for (int i = 0; i < numOfNodes; i++) {
+                        ip = st.nextToken();
+                        port = Integer.parseInt(st.nextToken());
+                        nodes.add(new Credential(ip, port, null));
+                    }
+                }
+                RegisterResponse registerResponse = new RegisterResponse(numOfNodes, nodes);
+                return registerResponse;
+
+            case "UNREG":
+                ip = st.nextToken();
+                port = Integer.parseInt(st.nextToken());
+                userName = st.nextToken();
+                Credential unregUserCredentials = new Credential(ip, port, userName);
+                return new UnregisterRequest(unregUserCredentials);
+
+            case "UNREGOK":
+                int res = Integer.parseInt(st.nextToken());
+                return new UnregisterResponse(res);
+
+            case "LEAVE":
+                ip = st.nextToken();
+                port = Integer.parseInt(st.nextToken());
+                Credential crd = new Credential(ip, port, null);
+                return new LeaveRequest(crd);
+
+            case "JOIN":
+                ip = st.nextToken();
+                port = Integer.parseInt(st.nextToken());
+                Credential joinerCredentials = new Credential(ip, port, null);
+                return new JoinRequest(joinerCredentials);
+
+            case "JOINOK":
+                int res = Integer.parseInt(st.nextToken());
+                return new JoinResponse(res, senderCredential);
+            case "LEAVEOK":
+                int res = Integer.parseInt(st.nextToken());
+                return new LeaveResponse(res);
+            case "SEARCH":
+                break;
+            case "SEARCHOK":
+                break;
+            default:
+                break;
+        }
+
         List<NodeCredentials> neighboringNodes = new ArrayList<>();
         for (int i = 0; i < numOfNodes; i++) {
             ip = st.nextToken();
