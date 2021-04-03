@@ -3,8 +3,10 @@ package io.viro.p2pfs.telnet;
 import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.Node;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
-import io.viro.p2pfs.telnet.message.Message;
-import io.viro.p2pfs.telnet.message.RegisterRequest;
+import io.viro.p2pfs.telnet.message.send.JoinRequestSent;
+import io.viro.p2pfs.telnet.message.send.JoinResponseSent;
+import io.viro.p2pfs.telnet.message.send.Message;
+import io.viro.p2pfs.telnet.message.send.RegisterRequest;
 import io.viro.p2pfs.telnet.processor.P2PFSMessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,18 +64,33 @@ public class P2PFSClient implements Runnable {
         }
     }
 
-    public void registerNode() {
+    public void sendMessage(Message message) {
         try {
-            Message message = new RegisterRequest(this.node.getCredentials().getHost(),
-                    this.node.getCredentials().getPort(), this.node.getCredentials().getUserName());
             String messageString = String.format("%04d", message.getMessage().length() + 5) +
                     Constant.SEPARATOR + message.getMessage();
             DatagramPacket datagramPacket = new DatagramPacket(messageString.getBytes(),
                     messageString.getBytes().length,
-                    InetAddress.getByName(this.bootstrapServer.getHost()), this.bootstrapServer.getPort());
+                    InetAddress.getByName(message.getReceiver().getHost()), message.getReceiver().getPort());
             socket.send(datagramPacket);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    public void registerNode() {
+        Message message = new RegisterRequest(this.node.getCredentials(), bootstrapServer);
+        sendMessage(message);
+    }
+
+    public void join(JoinRequestSent message) {
+        sendMessage(message);
+    }
+
+    public void joinOK(JoinResponseSent message) {
+        sendMessage(message);
+    }
+
+    public Node getNode() {
+        return node;
     }
 }
