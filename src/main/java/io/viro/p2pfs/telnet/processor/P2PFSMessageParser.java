@@ -6,12 +6,14 @@ import io.viro.p2pfs.telnet.message.receive.JoinRequestReceived;
 import io.viro.p2pfs.telnet.message.receive.JoinResponseReceived;
 import io.viro.p2pfs.telnet.message.receive.ReceivedMessage;
 import io.viro.p2pfs.telnet.message.receive.RegisterResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
 
 /**
  * Parse messages.
@@ -71,8 +73,10 @@ public class P2PFSMessageParser {
 //            case "REGOK":
 //                int nodeCount = Integer.parseInt(st.nextToken());
 //                List<Credential> nodes = new ArrayList<>();
-//                if (!(numOfNodes == Constant.Codes.Register.ERROR_CANNOT_REGISTER || numOfNodes == Constant.Codes.Register.ERROR_DUPLICATE_IP ||
-//                        numOfNodes == Constant.Codes.Register.ERROR_ALREADY_REGISTERED || numOfNodes == Constant.Codes.Register.ERROR_COMMAND)) {
+//                if (!(numOfNodes == Constant.Codes.Register.ERROR_CANNOT_REGISTER ||
+//                numOfNodes == Constant.Codes.Register.ERROR_DUPLICATE_IP ||
+//                        numOfNodes == Constant.Codes.Register.ERROR_ALREADY_REGISTERED
+//                        || numOfNodes == Constant.Codes.Register.ERROR_COMMAND)) {
 //                    for (int i = 0; i < numOfNodes; i++) {
 //                        ip = st.nextToken();
 //                        port = Integer.parseInt(st.nextToken());
