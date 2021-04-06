@@ -4,7 +4,6 @@ import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 
 import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -62,13 +61,14 @@ public class Node {
         return files;
     }
 
-    public List<String> searchLocally(List<String> keywords) {
+    public List<String> searchLocally(String keyword) {
+        // to be implement
         return new ArrayList<>();
     }
 
-    public SearchRequestDTO initNewSearch(String keywords) {
-        List<String> keywordList = Arrays.asList(keywords.split(","));
-        SearchRequestDTO searchRequestDTO = new SearchRequestDTO(this.nextSearchId, this.credentials, keywordList);
+    public SearchRequestDTO initNewSearch(String keyword) {
+//        List<String> keywordList = Arrays.asList(keywords.split(","));
+        SearchRequestDTO searchRequestDTO = new SearchRequestDTO(this.nextSearchId, this.credentials, keyword);
         activeSearchDetails.put(searchRequestDTO.getId(), searchRequestDTO);
         return searchRequestDTO;
     }

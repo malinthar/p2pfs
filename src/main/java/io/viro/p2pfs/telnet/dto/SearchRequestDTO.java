@@ -1,7 +1,6 @@
 package io.viro.p2pfs.telnet.dto;
 
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
-import java.util.List;
 
 /**
  * Search request DTO class.
@@ -10,21 +9,21 @@ import java.util.List;
 public class SearchRequestDTO {
     int id;
     NodeCredentials requestNode;
-    List<String> keywords;
+    String keyword;
 
-    public SearchRequestDTO(int id, NodeCredentials requestNode, List<String> keywords) {
+    public SearchRequestDTO(int id, NodeCredentials requestNode, String keywords) {
         super();
         this.id = id;
         this.requestNode = requestNode;
-        this.keywords = keywords;
+        this.keyword = keyword;
     }
 
     public int getId() {
         return id;
     }
 
-    public List<String> getKeywords() {
-        return keywords;
+    public String getKeyword() {
+        return keyword;
     }
 
     public NodeCredentials getRequestNodeCredentials() {

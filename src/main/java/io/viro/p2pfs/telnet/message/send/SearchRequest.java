@@ -1,8 +1,8 @@
 package io.viro.p2pfs.telnet.message.send;
 
+import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
-import java.util.List;
 
 /**
  * Search Request
@@ -12,13 +12,13 @@ public class SearchRequest extends Message {
 
     int id;
     NodeCredentials requestNode;
-    List<String> keywords;
+    String keyword;
 
     public SearchRequest(SearchRequestDTO searchRequestDTO, NodeCredentials receiver) {
         super(receiver);
         this.id = searchRequestDTO.getId();
         this.requestNode = searchRequestDTO.getRequestNodeCredentials();
-        this.keywords = searchRequestDTO.getKeywords();
+        this.keyword = searchRequestDTO.getKeyword();
     }
 
     public int getId() {
@@ -37,16 +37,20 @@ public class SearchRequest extends Message {
         this.requestNode = requestNode;
     }
 
-    public List<String> getKeywords() {
-        return keywords;
+    public String getKeyword() {
+        return keyword;
     }
 
-    public void setKeywords(List<String> keywords) {
-        this.keywords = keywords;
+    public void setKeywords(String keyword) {
+        this.keyword = keyword;
     }
 
     @Override
     public String getMessage() {
-        return "To be implement";
+        String message = Constant.SEARCH;
+        message += " " + this.id + " " + this.requestNode.getHost() + " " + this.requestNode.getPort() + " " +
+                this.keyword;
+//                + " " + this.getHops();
+        return message;
     }
 }

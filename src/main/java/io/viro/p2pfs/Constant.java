@@ -10,6 +10,7 @@ public class Constant {
     public static final String REG = "REG";
     public static final String JOIN = "JOIN";
     public static final String SEPARATOR = " ";
+    public static final String SEARCH = "SEARCH";
 
 
     //Responses
@@ -22,6 +23,8 @@ public class Constant {
     public static final String JOINOK = "JOINOK";
     public static final int JOIN_SUCCESS = 0;
     public static final int JOIN_ERROR = 9999;
+
+    public static final String SEARCHOK = "SEARCHOK";
 
     private static final List<Integer> REG_ERROR_CODES;
 

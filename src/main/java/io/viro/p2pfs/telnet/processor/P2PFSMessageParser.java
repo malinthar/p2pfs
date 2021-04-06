@@ -7,6 +7,7 @@ import io.viro.p2pfs.telnet.message.receive.JoinResponseReceived;
 import io.viro.p2pfs.telnet.message.receive.ReceivedMessage;
 import io.viro.p2pfs.telnet.message.receive.RegisterResponse;
 
+import io.viro.p2pfs.telnet.message.receive.SearchRequestReceived;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +27,9 @@ public class P2PFSMessageParser {
      * @param message
      * @return
      */
-    private static final Logger logger = LoggerFactory.getLogger(P2PFSMessageParser.class);
+    private final Logger logger = LoggerFactory.getLogger(P2PFSMessageParser.class);
 
-    public ReceivedMessage parseMessage(String message) {
+    public static ReceivedMessage parseMessage(String message) {
         StringTokenizer tokenizer = new StringTokenizer(message, " ");
         String length = tokenizer.nextToken();
         logger.info("Message length :", length);
@@ -59,6 +60,16 @@ public class P2PFSMessageParser {
         }
         if (command.equals(Constant.JOIN)) {
             return new JoinRequestReceived();
+        }
+        if (command.equals(Constant.SEARCH)) {
+            int searchId = Integer.parseInt(tokenizer.nextToken());
+            String host = tokenizer.nextToken();
+            int port = Integer.parseInt(tokenizer.nextToken());
+            String keyword = tokenizer.nextToken();
+//            int hops = Integer.parseInt(st.nextToken());
+            NodeCredentials requestOwner = new NodeCredentials(host, port, null);
+            SearchRequestReceived searchRequestReceived = new SearchRequestReceived(searchId, requestOwner, keyword);
+            return searchRequestReceived;
         }
 
 

@@ -1,5 +1,6 @@
 package io.viro.p2pfs.telnet.message.receive;
 
+import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import java.util.List;
 
@@ -54,6 +55,13 @@ public class SearchResponse {
     }
 
     public String getMessage() {
-        return "To be Implement";
+        String message = Constant.SEARCHOK;
+        message += " " + searchId + " " + this.numResults + " " + this.credential.getHost() + " " +
+                this.credential.getPort();
+//                + " " + this.getHops();
+        for (String result : results) {
+            message += " " + result;
+        }
+        return message;
     }
 }

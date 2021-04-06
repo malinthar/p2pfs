@@ -110,7 +110,7 @@ public class P2PFSClient implements Runnable {
     }
 
     public void triggerSearch(SearchRequestDTO searchRequestDto) {
-        List<String> searchResults = node.searchLocally(searchRequestDto.getKeywords());
+        List<String> searchResults = node.searchLocally(searchRequestDto.getKeyword());
         if (searchResults.isEmpty()) {
             System.out.println("File does not exists in " + node.getCredentials().getUserName());
             List<NodeCredentials> neighbors = node.getNeighbors();
@@ -140,7 +140,7 @@ public class P2PFSClient implements Runnable {
 
     public void initNewSearch(String query) {
         SearchRequestDTO searchRequestDTO = node.initNewSearch(query);
-        System.out.println("\nTriggered search request for " + searchRequestDTO.getKeywords().toString());
+        System.out.println("\nTriggered search request for " + searchRequestDTO.getKeyword());
         this.triggerSearch(searchRequestDTO);
     }
 
@@ -148,9 +148,9 @@ public class P2PFSClient implements Runnable {
 
         SearchRequest searchRequest = new SearchRequest(searchRequestDto, neighborCredentials);
         String message = searchRequest.getMessage();
-
         try {
-            socket.send(null);
+            socket.send(new DatagramPacket(message.getBytes(), message.getBytes().length,
+                    InetAddress.getByName(neighborCredentials.getHost()), neighborCredentials.getPort()));
         } catch (IOException e) {
             e.printStackTrace();
         }
