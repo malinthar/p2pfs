@@ -2,9 +2,17 @@ package io.viro.p2pfs;
 
 import io.viro.p2pfs.telnet.P2PFSClient;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
+
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * Boostrap class for starting a Peer node in the p2p system.
@@ -28,12 +36,33 @@ public class BootstrapNode {
             Node node = new Node(credentials);
             P2PFSClient client = new P2PFSClient(node, bootstrapServer);
             client.registerNode();
+
+            List<String> searchQueries =
+                    Arrays.asList("Twilight", "Jack", "American_Idol", "Happy_Feet", "Twilight_saga", "Happy_Feet",
+                            "Feet");
+            Collections.shuffle(searchQueries);
+
             while (true) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     logger.error(e.getMessage());
                 }
+
+                if (!client.getIsRegistered()) {
+                    continue;
+                }
+                //search function here
+                for (int i = 0; i < searchQueries.size(); i++) {
+                    String query = searchQueries.get(i);
+                    client.initNewSearch(query);
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
             }
 
         } else {

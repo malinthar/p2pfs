@@ -54,7 +54,9 @@ public class P2PFSMessageProcessor {
                 } else {
                     logger.error("Unknown error");
                 }
+                client.setIsRegistered(false);
             } else {
+                client.setIsRegistered(true);
                 List<NodeCredentials> neighborList = ((RegisterResponse) response).getNeighboringNodes();
                 if (neighborList.size() == 0) {
                     logger.info("Registered successfully, BS server responded with 0 nodes!");
