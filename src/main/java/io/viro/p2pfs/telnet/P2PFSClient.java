@@ -157,7 +157,7 @@ public class P2PFSClient implements Runnable {
     }
 
     public void searchOk(SearchResponse response) {
-        String msg = response.getMessage();
+//        String msg = response.getMessage();
         try {
             socket.send(null);
         } catch (IOException e) {

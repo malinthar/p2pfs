@@ -11,7 +11,7 @@ public class SearchRequestDTO {
     NodeCredentials requestNode;
     String keyword;
 
-    public SearchRequestDTO(int id, NodeCredentials requestNode, String keywords) {
+    public SearchRequestDTO(int id, NodeCredentials requestNode, String keyword) {
         super();
         this.id = id;
         this.requestNode = requestNode;

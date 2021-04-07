@@ -29,8 +29,8 @@ public class Node {
 
     public boolean isEqual(NodeCredentials thatCredentials) {
         NodeCredentials thisCredentials = this.getCredentials();
-        if (thisCredentials.getUserName() == thatCredentials.getUserName() &&
-                thisCredentials.getHost() == thatCredentials.getHost() &&
+        if (thisCredentials.getUserName().equals(thatCredentials.getUserName()) &&
+                thisCredentials.getHost().equals(thatCredentials.getHost()) &&
                 thisCredentials.getPort() == thatCredentials.getPort()) {
             return true;
         }

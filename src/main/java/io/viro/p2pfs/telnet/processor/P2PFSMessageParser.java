@@ -27,9 +27,9 @@ public class P2PFSMessageParser {
      * @param message
      * @return
      */
-    private final Logger logger = LoggerFactory.getLogger(P2PFSMessageParser.class);
+    private static final Logger logger = LoggerFactory.getLogger(P2PFSMessageParser.class);
 
-    public static ReceivedMessage parseMessage(String message) {
+    public ReceivedMessage parseMessage(String message) {
         StringTokenizer tokenizer = new StringTokenizer(message, " ");
         String length = tokenizer.nextToken();
         logger.info("Message length :", length);

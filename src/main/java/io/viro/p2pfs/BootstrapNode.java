@@ -37,7 +37,6 @@ public class BootstrapNode {
             P2PFSClient client = new P2PFSClient(node, bootstrapServer);
             client.registerNode();
 
-            Map<Integer, String> activeQueries = new HashMap<>();
             List<String> searchQueries =
                     Arrays.asList("Twilight", "Jack", "American_Idol", "Happy_Feet", "Twilight_saga", "Happy_Feet",
                             "Feet");
