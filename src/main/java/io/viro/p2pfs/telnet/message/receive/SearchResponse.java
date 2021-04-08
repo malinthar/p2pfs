@@ -2,6 +2,7 @@ package io.viro.p2pfs.telnet.message.receive;
 
 import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
+
 import java.util.List;
 
 /**
@@ -59,9 +60,10 @@ public class SearchResponse {
         message += " " + searchId + " " + this.numResults + " " + this.credential.getHost() + " " +
                 this.credential.getPort();
 //                + " " + this.getHops();
+        StringBuffer buffer = new StringBuffer(message);
         for (String result : results) {
-            message += " " + result;
+            buffer.append(" ").append(result);
         }
-        return message;
+        return buffer.toString();
     }
 }
