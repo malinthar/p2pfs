@@ -37,6 +37,13 @@ public class Node {
         return false;
     }
 
+    public boolean isSearchActive(int searchId) {
+        if (this.activeSearchDetails.containsKey(searchId)) {
+            return true;
+        }
+        return false;
+    }
+
     public void addNeighbor(NodeCredentials neighbor) {
         this.neighbors.add(neighbor);
     }
@@ -68,7 +75,7 @@ public class Node {
 
     public SearchRequestDTO initNewSearch(String keyword) {
 //        List<String> keywordList = Arrays.asList(keywords.split(","));
-        SearchRequestDTO searchRequestDTO = new SearchRequestDTO(this.nextSearchId, this.credentials, keyword);
+        SearchRequestDTO searchRequestDTO = new SearchRequestDTO(this.nextSearchId, this.credentials, keyword, 0);
         activeSearchDetails.put(searchRequestDTO.getId(), searchRequestDTO);
         return searchRequestDTO;
     }

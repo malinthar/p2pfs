@@ -13,14 +13,15 @@ public class SearchResponse {
     private int searchId;
     private NodeCredentials credential;
     private int numResults;
-    //    private int hops;
+    private int hops;
     private List<String> results;
 
-    public SearchResponse(int searchId, NodeCredentials credential, List<String> results) {
+    public SearchResponse(int searchId, NodeCredentials credential, int hops, List<String> results) {
         this.searchId = searchId;
         this.credential = credential;
         this.results = results;
         this.numResults = results.size();
+        this.hops = hops;
     }
 
     public int getSearchId() {
@@ -55,11 +56,18 @@ public class SearchResponse {
         this.results = results;
     }
 
+    public int getHops() {
+        return hops;
+    }
+
+    public void setHops(int hops) {
+        this.hops = hops;
+    }
+
     public String getMessage() {
         String message = Constant.SEARCHOK;
         message += " " + searchId + " " + this.numResults + " " + this.credential.getHost() + " " +
-                this.credential.getPort();
-//                + " " + this.getHops();
+                this.credential.getPort() + " " + this.hops;
         StringBuffer buffer = new StringBuffer(message);
         for (String result : results) {
             buffer.append(" ").append(result);
