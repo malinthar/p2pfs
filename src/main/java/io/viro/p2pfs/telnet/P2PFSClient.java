@@ -112,26 +112,26 @@ public class P2PFSClient implements Runnable {
     public void triggerSearch(SearchRequestDTO searchRequestDto) {
         List<String> searchResults = node.searchLocally(searchRequestDto.getKeyword());
         if (searchResults.isEmpty()) {
-            System.out.println("File does not exists in " + node.getCredentials().getUserName());
+            logger.info("File does not exists in " + node.getCredentials().getUserName());
             List<NodeCredentials> neighbors = node.getNeighbors();
             neighbors.forEach((neighbor) -> {
                 search(neighbor, searchRequestDto);
-                System.out.println("Forward SEARCH to neighbor" + " : " + neighbor.getUserName());
+                logger.info("Forward SEARCH to neighbor" + " : " + neighbor.getUserName());
             });
             return;
         }
 
-        System.out.println(
+        logger.info(
                 "File is available at " + node.getCredentials().getUserName() + " , " +
                         node.getCredentials().getHost() + " : " + node.getCredentials().getPort());
         if (node.isEqual(searchRequestDto.getRequestNodeCredentials())) {
-            System.out.println(
+            logger.info(
                     "File is available locally at " + node.getCredentials().getUserName() + " , " +
                             node.getCredentials().getHost() + " : " + node.getCredentials().getPort());
             return;
         }
 
-        System.out.println("Send SEARCHOK response to search request originator");
+        logger.info("Send SEARCHOK response to search request originator");
         SearchResponse response =
                 new SearchResponse(searchRequestDto.getId(), searchRequestDto.getRequestNodeCredentials(),
                         searchResults);
@@ -139,9 +139,10 @@ public class P2PFSClient implements Runnable {
     }
 
     public void initNewSearch(String query) {
-        SearchRequestDTO searchRequestDTO = node.initNewSearch(query);
-        System.out.println("\nTriggered search request for " + searchRequestDTO.getKeyword());
-        this.triggerSearch(searchRequestDTO);
+//        SearchRequestDTO searchRequestDTO = node.initNewSearch(query);
+//        logger.info("\nTriggered search request for " + searchRequestDTO.getKeyword());
+//        this.triggerSearch(searchRequestDTO);
+        logger.info(query);
     }
 
     public void search(NodeCredentials neighborCredentials, SearchRequestDTO searchRequestDto) {
@@ -152,17 +153,12 @@ public class P2PFSClient implements Runnable {
             socket.send(new DatagramPacket(message.getBytes(), message.getBytes().length,
                     InetAddress.getByName(neighborCredentials.getHost()), neighborCredentials.getPort()));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 
     public void searchOk(SearchResponse response) {
-//        String msg = response.getMessage();
-        try {
-            socket.send(null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String msg = response.getMessage();
+        logger.info(msg);
     }
 }
-

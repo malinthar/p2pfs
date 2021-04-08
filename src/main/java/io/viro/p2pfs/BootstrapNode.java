@@ -2,16 +2,13 @@ package io.viro.p2pfs;
 
 import io.viro.p2pfs.telnet.P2PFSClient;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
-
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -59,7 +56,7 @@ public class BootstrapNode {
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        logger.info(e.getMessage());
                     }
                 }
                 break;

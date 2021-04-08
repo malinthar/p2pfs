@@ -57,22 +57,23 @@ public class P2PFSMessageProcessor {
                 client.setIsRegistered(false);
             } else {
                 client.setIsRegistered(true);
-                List<NodeCredentials> neighborList = ((RegisterResponse) response).getNeighboringNodes();
-                if (neighborList.size() == 0) {
+                List<NodeCredentials> nodesList = ((RegisterResponse) response).getNeighboringNodes();
+                if (nodesList.size() == 0) {
                     logger.info("Registered successfully, BS server responded with 0 nodes!");
                 } else {
                     //select two random nodes from the returned nodes and put join requests to them.
-                    List<NodeCredentials> nodesList = ((RegisterResponse) response).getNeighboringNodes();
-                    int randomNumber = random.nextInt(nodesList.size());
-                    NodeCredentials neighbor1 = nodesList.get(randomNumber);
-                    client.join(new JoinRequestSent(client.getNode().getCredentials(), neighbor1));
-                    nodesList.remove(randomNumber);
-                    randomNumber = random.nextInt(nodesList.size());
-                    NodeCredentials neighbor2 = nodesList.get(randomNumber);
-                    client.join(new JoinRequestSent(client.getNode().getCredentials(), neighbor2));
-                    nodesList.remove(randomNumber);
+                    logger.info("Registered successfully, BS server responded with " + nodesList.size() + " nodes!");
+                    for (int i = 0; i < 2; i++) {
+                        if (nodesList.size() == 0) {
+                            break;
+                        } else {
+                            int randomNumber = random.nextInt(nodesList.size());
+                            NodeCredentials neighbor = nodesList.get(randomNumber);
+                            nodesList.remove(randomNumber);
+                            client.join(new JoinRequestSent(client.getNode().getCredentials(), neighbor));
+                        }
+                    }
                     //todo: what can we do with the remaining nodes.
-
                 }
             }
         } else if (response instanceof JoinResponseReceived) {
@@ -84,7 +85,7 @@ public class P2PFSMessageProcessor {
             }
         } else if (response instanceof JoinRequestReceived) {
             logger.info("Join request received from ", sender.getHost());
-            if (this.client.getNode().getNeighborCount() < 2) {
+            if (this.client.getNode().getNeighborCount() < 6) {
                 this.client.getNode().addNeighbor(sender);
                 this.client.joinOK(new JoinResponseSent(this.client.getNode().getCredentials(),
                         sender, Constant.JOIN_SUCCESS));
@@ -95,6 +96,8 @@ public class P2PFSMessageProcessor {
                         sender, Constant.JOIN_ERROR));
             }
 
+        } else {
+            logger.info("no handler");
         }
     }
 }
