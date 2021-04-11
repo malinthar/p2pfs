@@ -134,7 +134,7 @@ public class P2PFSClient implements Runnable {
         logger.info("Send SEARCHOK response to search request originator");
         SearchResponse response =
                 new SearchResponse(searchRequestDto.getId(), searchRequestDto.getRequestNodeCredentials(),
-                        searchResults);
+                        searchRequestDto.getHopCount(), searchResults);
         searchOk(response);
     }
 
@@ -148,6 +148,7 @@ public class P2PFSClient implements Runnable {
     public void search(NodeCredentials neighborCredentials, SearchRequestDTO searchRequestDto) {
 
         SearchRequest searchRequest = new SearchRequest(searchRequestDto, neighborCredentials);
+        searchRequest.incrementHopCountByOne();
         String message = searchRequest.getMessage();
         try {
             socket.send(new DatagramPacket(message.getBytes(), message.getBytes().length,

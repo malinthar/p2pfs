@@ -10,15 +10,17 @@ import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
 
 public class SearchRequest extends Message {
 
-    int id;
-    NodeCredentials requestNode;
-    String keyword;
+    private int id;
+    private NodeCredentials requestNode;
+    private String keyword;
+    private int hopCount;
 
     public SearchRequest(SearchRequestDTO searchRequestDTO, NodeCredentials receiver) {
         super(receiver);
         this.id = searchRequestDTO.getId();
         this.requestNode = searchRequestDTO.getRequestNodeCredentials();
         this.keyword = searchRequestDTO.getKeyword();
+        this.hopCount = searchRequestDTO.getHopCount();
     }
 
     public int getId() {
@@ -45,12 +47,23 @@ public class SearchRequest extends Message {
         this.keyword = keyword;
     }
 
+    public int getHopCount() {
+        return hopCount;
+    }
+
+    public void setHopCount(int hopCount) {
+        this.hopCount = hopCount;
+    }
+
+    public void incrementHopCountByOne() {
+        this.hopCount++;
+    }
+
     @Override
     public String getMessage() {
         String message = Constant.SEARCH;
         message += " " + this.id + " " + this.requestNode.getHost() + " " + this.requestNode.getPort() + " " +
-                this.keyword;
-//                + " " + this.getHops();
+                this.keyword + " " + this.hopCount;
         return message;
     }
 }
