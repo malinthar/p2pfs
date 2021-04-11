@@ -4,12 +4,12 @@ import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.Node;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
-import io.viro.p2pfs.telnet.message.receive.SearchResponse;
 import io.viro.p2pfs.telnet.message.send.JoinRequestSent;
 import io.viro.p2pfs.telnet.message.send.JoinResponseSent;
 import io.viro.p2pfs.telnet.message.send.Message;
 import io.viro.p2pfs.telnet.message.send.RegisterRequest;
 import io.viro.p2pfs.telnet.message.send.SearchRequest;
+import io.viro.p2pfs.telnet.message.send.SearchResponseSent;
 import io.viro.p2pfs.telnet.processor.P2PFSMessageProcessor;
 
 import org.slf4j.Logger;
@@ -97,6 +97,55 @@ public class P2PFSClient implements Runnable {
         sendMessage(message);
     }
 
+    public void search(SearchRequest message) {
+        sendMessage(message);
+    }
+
+    public void searchOk(SearchResponseSent response) {
+        sendMessage(response);
+    }
+
+    //search functionality.
+    public void triggerSearch(SearchRequestDTO searchRequestDto) {
+        //search local files
+        List<String> searchResults = node.searchLocally(searchRequestDto.getKeyword());
+
+        //pass to neighbors
+        if (searchResults.isEmpty()) {
+            logger.info("File does not exists in " + node.getCredentials().getUserName());
+            List<NodeCredentials> neighbors = node.getNeighbors();
+            neighbors.forEach((neighbor) -> {
+                logger.info("Forward SEARCH to neighbor" + " : " + neighbor.getUserName());
+                SearchRequest searchRequest = new SearchRequest(searchRequestDto, neighbor);
+                searchRequest.incrementHopCountByOne();
+                search(searchRequest);
+            });
+            return;
+        }
+
+        if (node.isEqual(searchRequestDto.getRequestNodeCredentials())) {
+            logger.info("File is available locally at " + node.getCredentials().getUserName() + " , " +
+                    node.getCredentials().getHost() + " : " + node.getCredentials().getPort());
+            return;
+        } else {
+            logger.info("File is available at " + node.getCredentials().getUserName() + " , " +
+                    node.getCredentials().getHost() + " : " + node.getCredentials().getPort());
+        }
+
+        logger.info("Send SEARCHOK response to search query originator");
+        SearchResponseSent response = new SearchResponseSent(searchRequestDto.getId(),
+                searchRequestDto.getRequestNodeCredentials(),
+                this.node.getCredentials(),
+                        searchRequestDto.getHopCount(), searchResults);
+        searchOk(response);
+    }
+
+    public void initNewSearch(String query) {
+        SearchRequestDTO searchRequestDTO = node.initNewSearch(query);
+        logger.info("\nTriggered search request for " + searchRequestDTO.getKeyword());
+        this.triggerSearch(searchRequestDTO);
+    }
+
     public Node getNode() {
         return node;
     }
@@ -109,57 +158,5 @@ public class P2PFSClient implements Runnable {
         return isRegistered;
     }
 
-    public void triggerSearch(SearchRequestDTO searchRequestDto) {
-        List<String> searchResults = node.searchLocally(searchRequestDto.getKeyword());
-        if (searchResults.isEmpty()) {
-            logger.info("File does not exists in " + node.getCredentials().getUserName());
-            List<NodeCredentials> neighbors = node.getNeighbors();
-            neighbors.forEach((neighbor) -> {
-                search(neighbor, searchRequestDto);
-                logger.info("Forward SEARCH to neighbor" + " : " + neighbor.getUserName());
-            });
-            return;
-        }
 
-        logger.info(
-                "File is available at " + node.getCredentials().getUserName() + " , " +
-                        node.getCredentials().getHost() + " : " + node.getCredentials().getPort());
-        if (node.isEqual(searchRequestDto.getRequestNodeCredentials())) {
-            logger.info(
-                    "File is available locally at " + node.getCredentials().getUserName() + " , " +
-                            node.getCredentials().getHost() + " : " + node.getCredentials().getPort());
-            return;
-        }
-
-        logger.info("Send SEARCHOK response to search request originator");
-        SearchResponse response =
-                new SearchResponse(searchRequestDto.getId(), searchRequestDto.getRequestNodeCredentials(),
-                        searchRequestDto.getHopCount(), searchResults);
-        searchOk(response);
-    }
-
-    public void initNewSearch(String query) {
-//        SearchRequestDTO searchRequestDTO = node.initNewSearch(query);
-//        logger.info("\nTriggered search request for " + searchRequestDTO.getKeyword());
-//        this.triggerSearch(searchRequestDTO);
-        logger.info(query);
-    }
-
-    public void search(NodeCredentials neighborCredentials, SearchRequestDTO searchRequestDto) {
-
-        SearchRequest searchRequest = new SearchRequest(searchRequestDto, neighborCredentials);
-        searchRequest.incrementHopCountByOne();
-        String message = searchRequest.getMessage();
-        try {
-            socket.send(new DatagramPacket(message.getBytes(), message.getBytes().length,
-                    InetAddress.getByName(neighborCredentials.getHost()), neighborCredentials.getPort()));
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    public void searchOk(SearchResponse response) {
-        String msg = response.getMessage();
-        logger.info(msg);
-    }
 }

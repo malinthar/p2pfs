@@ -1,8 +1,8 @@
 package io.viro.p2pfs;
 
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
-
 import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,11 +20,11 @@ public class Node {
     HashMap<Integer, SearchRequestDTO> activeSearchDetails = new HashMap<Integer, SearchRequestDTO>();
     private static int nextSearchId = 0;
 
-    Node(NodeCredentials credentials) {
+    Node(NodeCredentials credentials, List<String> files) {
         this.credentials = credentials;
         neighbors = new ArrayList<>();
         secondaryNeighbors = new ArrayList<>();
-        files = new ArrayList<>();
+        this.files = files;
     }
 
     public boolean isEqual(NodeCredentials thatCredentials) {
@@ -69,13 +69,13 @@ public class Node {
     }
 
     public List<String> searchLocally(String keyword) {
-        // to be implement
+        // to be implemented
         return new ArrayList<>();
     }
 
-    public SearchRequestDTO initNewSearch(String keyword) {
+    public SearchRequestDTO initNewSearch(String query) {
 //        List<String> keywordList = Arrays.asList(keywords.split(","));
-        SearchRequestDTO searchRequestDTO = new SearchRequestDTO(this.nextSearchId, this.credentials, keyword, 0);
+        SearchRequestDTO searchRequestDTO = new SearchRequestDTO(this.nextSearchId, this.credentials, query, 0);
         activeSearchDetails.put(searchRequestDTO.getId(), searchRequestDTO);
         return searchRequestDTO;
     }
