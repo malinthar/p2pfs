@@ -11,7 +11,6 @@ import io.viro.p2pfs.telnet.message.send.RegisterRequest;
 import io.viro.p2pfs.telnet.message.send.SearchRequest;
 import io.viro.p2pfs.telnet.message.send.SearchResponseSent;
 import io.viro.p2pfs.telnet.processor.P2PFSMessageProcessor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,12 +108,14 @@ public class P2PFSClient implements Runnable {
     public void triggerSearch(SearchRequestDTO searchRequestDto) {
         //search local files
         List<String> searchResults = node.searchLocally(searchRequestDto.getKeyword());
-
         //pass to neighbors
         if (searchResults.isEmpty()) {
-            logger.info("File does not exists in " + node.getCredentials().getUserName());
-            List<NodeCredentials> neighbors = node.getNeighbors();
-            neighbors.forEach((neighbor) -> {
+            List<NodeCredentials> nextNodes = node.searchCache(searchRequestDto.getKeyword());
+            if (nextNodes.isEmpty()) {
+                nextNodes = node.getRoutingTable();
+            }
+            logger.info("File does not exist in " + node.getCredentials().getUserName());
+            nextNodes.forEach((neighbor) -> {
                 logger.info("Forward SEARCH to neighbor" + " : " + neighbor.getUserName());
                 SearchRequest searchRequest = new SearchRequest(searchRequestDto, neighbor);
                 searchRequest.incrementHopCountByOne();
@@ -123,20 +124,12 @@ public class P2PFSClient implements Runnable {
             return;
         }
 
-        if (node.isEqual(searchRequestDto.getRequestNodeCredentials())) {
-            logger.info("File is available locally at " + node.getCredentials().getUserName() + " , " +
-                    node.getCredentials().getHost() + " : " + node.getCredentials().getPort());
-            return;
-        } else {
-            logger.info("File is available at " + node.getCredentials().getUserName() + " , " +
-                    node.getCredentials().getHost() + " : " + node.getCredentials().getPort());
-        }
-
-        logger.info("Send SEARCHOK response to search query originator");
+        //file found todo://hits are not exactly matching though, might not get the best results
+        logger.info("Hits found! send SEARCHOK response to search query originator");
         SearchResponseSent response = new SearchResponseSent(searchRequestDto.getId(),
                 searchRequestDto.getRequestNodeCredentials(),
                 this.node.getCredentials(),
-                        searchRequestDto.getHopCount(), searchResults);
+                searchRequestDto.getHopCount(), searchResults);
         searchOk(response);
     }
 

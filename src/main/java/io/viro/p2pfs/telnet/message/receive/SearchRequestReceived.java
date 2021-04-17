@@ -3,7 +3,7 @@ package io.viro.p2pfs.telnet.message.receive;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 
 /**
- *Received Search request.
+ * Received Search request.
  */
 
 public class SearchRequestReceived extends ReceivedMessage {

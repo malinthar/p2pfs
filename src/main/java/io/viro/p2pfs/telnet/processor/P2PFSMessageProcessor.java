@@ -74,7 +74,7 @@ public class P2PFSMessageProcessor {
                             client.join(new JoinRequestSent(client.getNode().getCredentials(), neighbor));
                         }
                     }
-                    //todo: what can we do with the remaining nodes.
+                    //todo: What can we do with the remaining nodes.
                 }
             }
         } else if (response instanceof JoinResponseReceived) {
@@ -83,7 +83,7 @@ public class P2PFSMessageProcessor {
                 this.client.getNode().addNeighbor(sender);
                 logger.info("Node ", sender.getHost(), "is added to routing table of Node ",
                         this.client.getNode().getCredentials().getHost(), " after JOINOK");
-            }
+            } //todo: JoinResponse is an error what to do?
         } else if (response instanceof JoinRequestReceived) {
             logger.info("Join request received from ", sender.getHost());
             if (this.client.getNode().getNeighborCount() < 6) {
@@ -96,13 +96,14 @@ public class P2PFSMessageProcessor {
                 this.client.joinOK(new JoinResponseSent(this.client.getNode().getCredentials(),
                         sender, Constant.JOIN_ERROR));
             }
-
         } else if (response instanceof SearchRequestReceived) {
-            //todo: Complete
+            logger.info("Search request received from ", sender.getHost());
         } else if (response instanceof SearchResponseReceived) {
-            //todo: Complete
+            logger.info("search response received from", sender.getHost());
+            //todo: Complete, when received add to cache in node. @chanuka
         } else {
             logger.info("no handler");
         }
+
     }
 }

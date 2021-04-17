@@ -6,7 +6,6 @@ import io.viro.p2pfs.telnet.message.receive.JoinRequestReceived;
 import io.viro.p2pfs.telnet.message.receive.JoinResponseReceived;
 import io.viro.p2pfs.telnet.message.receive.ReceivedMessage;
 import io.viro.p2pfs.telnet.message.receive.RegisterResponse;
-
 import io.viro.p2pfs.telnet.message.receive.SearchRequestReceived;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +70,12 @@ public class P2PFSMessageParser {
             SearchRequestReceived searchRequestReceived = new SearchRequestReceived(searchId, requestOwner, keyword);
             return searchRequestReceived;
         }
+        if (command.equals(Constant.SEARCHOK)) {
+            logger.info(message);
+        }
+        return null;
+    }
+}
 
 
 //        switch (command) {
@@ -133,7 +138,3 @@ public class P2PFSMessageParser {
 //            default:
 //                break;
 //        }
-
-        return null;
-    }
-}

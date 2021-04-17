@@ -6,6 +6,7 @@ import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a node.
@@ -13,8 +14,9 @@ import java.util.List;
 public class Node {
     NodeCredentials credentials;
     List<String> files;
-    List<NodeCredentials> neighbors;
-    List<NodeCredentials> secondaryNeighbors;
+    List<NodeCredentials> routingTable; //routing table
+    List<NodeCredentials> secondaryNeighbors; //Limit=5,
+    Map<NodeCredentials, List<String>> cache;
 
     // for search
     HashMap<Integer, SearchRequestDTO> activeSearchDetails = new HashMap<Integer, SearchRequestDTO>();
@@ -22,8 +24,9 @@ public class Node {
 
     Node(NodeCredentials credentials, List<String> files) {
         this.credentials = credentials;
-        neighbors = new ArrayList<>();
+        routingTable = new ArrayList<>();
         secondaryNeighbors = new ArrayList<>();
+        cache = new HashMap<>();
         this.files = files;
     }
 
@@ -45,7 +48,7 @@ public class Node {
     }
 
     public void addNeighbor(NodeCredentials neighbor) {
-        this.neighbors.add(neighbor);
+        this.routingTable.add(neighbor);
     }
 
     public void addSecondaryNeighbor(NodeCredentials neighbor) {
@@ -53,11 +56,11 @@ public class Node {
     }
 
     public int getNeighborCount() {
-        return neighbors.size();
+        return routingTable.size();
     }
 
-    public List<NodeCredentials> getNeighbors() {
-        return this.neighbors;
+    public List<NodeCredentials> getRoutingTable() {
+        return this.routingTable;
     }
 
     public NodeCredentials getCredentials() {
@@ -69,8 +72,23 @@ public class Node {
     }
 
     public List<String> searchLocally(String keyword) {
-        // to be implemented
-        return new ArrayList<>();
+        List<String> results = new ArrayList<>();
+        files.forEach(file -> {
+            if (file.contains(keyword)) {
+                results.add(file);
+            }
+        });
+        return results;
+    }
+
+    public List<NodeCredentials> searchCache(String keyword) {
+        List<NodeCredentials> results = new ArrayList<>();
+        cache.entrySet().forEach(entry -> {
+            if (entry.getValue().contains(keyword)) {
+                results.add(entry.getKey());
+            }
+        });
+        return results;
     }
 
     public SearchRequestDTO initNewSearch(String query) {
