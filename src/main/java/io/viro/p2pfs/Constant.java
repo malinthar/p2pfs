@@ -1,7 +1,9 @@
 package io.viro.p2pfs;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Constants.
@@ -25,14 +27,51 @@ public class Constant {
     public static final int JOIN_ERROR = 9999;
 
     public static final String SEARCHOK = "SEARCHOK";
-
     private static final List<Integer> REG_ERROR_CODES;
+
+    //Files
+    private static final List<String> FILES;
+    private static final List<String> QUERIES;
+    private static final Random random = new Random();
 
     static {
         REG_ERROR_CODES = Arrays.asList(COMMAND_ERROR, ALREADY_REGISTERED, ALREADY_REGISTERED_TO_ME, BS_FULL);
+        FILES = Arrays.asList("Adventures of Tintin", "Jack and Jill", "Glee",
+                "The Vampire Diarie", "King Arthur", "Windows XP", "Harry Potter",
+                "Kung Fu Panda", "Lady Gaga", "Twilight", "Windows 8",
+                "Mission Impossible", "Turn Up The Music", "Super Mario",
+                "American Pickers", "Microsoft Office 2010", "Happy Feet",
+                "Modern Family", "American Idol", "Hacking for Dummies");
+
+        QUERIES = Arrays.asList("Twilight", "Jack",
+                "American Idol", "Happy Feet", "Twilight saga", "Happy Feet",
+                "Happy Feet", "Feet", "Happy Feet", "Twilight", "Windows",
+                "Happy Feet", "Mission Impossible", "Twilight", "Windows 8",
+                "The", "Happy", "Windows 8", "Happy Feet", "Super Mario",
+                "Jack and Jill", "Happy Feet", "Impossible", "Happy Feet",
+                "Turn Up The Music", "Adventures of Tintin", "Twilight saga",
+                "Happy Feet", "Super Mario", "American Pickers", "Microsoft Office 2010",
+                "Twilight", "Modern Family", "Jack and Jill", "Jill", "Glee",
+                "The Vampire Diarie", "King Arthur", "Jack and Jill", "King Arthur",
+                "Windows XP", "Harry Potter", "Feet", "Kung Fu Panda", "Lady Gaga",
+                "Gaga", "Happy Feet", "Twilight", "Hacking", "King");
     }
 
     public static List<Integer> getRegErrorCodes() {
         return REG_ERROR_CODES;
+    }
+
+    public static List<String> getFilesRand() {
+        List<String> randFiles = new ArrayList<>();
+        int randNum = random.nextInt(3) + 3;
+        int count = 0;
+        while (count < randNum) {
+            int index = random.nextInt(FILES.size());
+            if (!randFiles.contains(FILES.get(index))) {
+                randFiles.add(FILES.get(index));
+                count++;
+            }
+        }
+        return randFiles;
     }
 }

@@ -20,23 +20,38 @@ public class BootstrapNode {
     public static void main(String[] args) {
         BasicConfigurator.configure();
         if (args.length == 5) {
+            logger.info("_________Arguments_________");
             for (String arg : args) {
                 logger.info(arg);
             }
+            //Node parameters.
             String nodeIp = args[0];
             int nodePort = Integer.parseInt(args[1]);
             String nodeUserName = args[2];
+            //BootstrapServer parameters
             String bootstrapServerIp = args[3];
             int bootstrapServerPort = Integer.parseInt(args[4]);
+
             NodeCredentials credentials = new NodeCredentials(nodeIp, nodePort, nodeUserName);
             NodeCredentials bootstrapServer = new NodeCredentials(bootstrapServerIp, bootstrapServerPort);
-            Node node = new Node(credentials);
+
+            //Create a new node
+            List<String> filesList = Constant.getFilesRand();
+            logger.info("_________Files list of the node_________");
+            for (String file : filesList) {
+                logger.info(file);
+            }
+            Node node = new Node(credentials, filesList);
+
+            //create a new client for distributed system communication
             P2PFSClient client = new P2PFSClient(node, bootstrapServer);
             client.registerNode();
 
+            //List of search queries in random order.
             List<String> searchQueries =
                     Arrays.asList("Twilight", "Jack", "American_Idol", "Happy_Feet", "Twilight_saga", "Happy_Feet",
                             "Feet");
+
             Collections.shuffle(searchQueries);
 
             while (true) {

@@ -7,6 +7,8 @@ import io.viro.p2pfs.telnet.message.receive.JoinRequestReceived;
 import io.viro.p2pfs.telnet.message.receive.JoinResponseReceived;
 import io.viro.p2pfs.telnet.message.receive.ReceivedMessage;
 import io.viro.p2pfs.telnet.message.receive.RegisterResponse;
+import io.viro.p2pfs.telnet.message.receive.SearchRequestReceived;
+import io.viro.p2pfs.telnet.message.receive.SearchResponseReceived;
 import io.viro.p2pfs.telnet.message.send.JoinRequestSent;
 import io.viro.p2pfs.telnet.message.send.JoinResponseSent;
 import org.slf4j.Logger;
@@ -39,7 +41,6 @@ public class P2PFSMessageProcessor {
      */
     public void processMessage(String message, NodeCredentials sender) {
         ReceivedMessage response = parser.parseMessage(message);
-        logger.info(response.toString()); //dummy to avoid findbugs
         if (response instanceof RegisterResponse) {
             if (((RegisterResponse) response).getNeighboringNodes() == null) {
                 int errorCode = ((RegisterResponse) response).getErrorCode();
@@ -96,6 +97,10 @@ public class P2PFSMessageProcessor {
                         sender, Constant.JOIN_ERROR));
             }
 
+        } else if (response instanceof SearchRequestReceived) {
+            //todo: Complete
+        } else if (response instanceof SearchResponseReceived) {
+            //todo: Complete
         } else {
             logger.info("no handler");
         }

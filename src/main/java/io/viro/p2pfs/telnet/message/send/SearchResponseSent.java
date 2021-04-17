@@ -1,4 +1,4 @@
-package io.viro.p2pfs.telnet.message.receive;
+package io.viro.p2pfs.telnet.message.send;
 
 import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
@@ -6,22 +6,24 @@ import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import java.util.List;
 
 /**
- * Search Response
+ * Response for a SearchRequest.
  */
+public class SearchResponseSent extends Message {
 
-public class SearchResponse {
+    NodeCredentials sender;
     private int searchId;
-    private NodeCredentials credential;
     private int numResults;
     private int hops;
     private List<String> results;
 
-    public SearchResponse(int searchId, NodeCredentials credential, int hops, List<String> results) {
+    public SearchResponseSent(int searchId, NodeCredentials receiver,
+                              NodeCredentials sender, int hops, List<String> results) {
+        super(receiver);
         this.searchId = searchId;
-        this.credential = credential;
         this.results = results;
         this.numResults = results.size();
         this.hops = hops;
+        this.sender = sender;
     }
 
     public int getSearchId() {
@@ -30,14 +32,6 @@ public class SearchResponse {
 
     public void setSearchId(int searchId) {
         this.searchId = searchId;
-    }
-
-    public NodeCredentials getCredential() {
-        return credential;
-    }
-
-    public void setCredential(NodeCredentials credential) {
-        this.credential = credential;
     }
 
     public int getNumResults() {
@@ -64,14 +58,16 @@ public class SearchResponse {
         this.hops = hops;
     }
 
+    @Override
     public String getMessage() {
-        String message = Constant.SEARCHOK;
-        message += " " + searchId + " " + this.numResults + " " + this.credential.getHost() + " " +
-                this.credential.getPort() + " " + this.hops;
-        StringBuffer buffer = new StringBuffer(message);
+        StringBuilder message = new StringBuilder(Constant.SEARCHOK);
+        message.append(Constant.SEPARATOR).append(searchId).append(Constant.SEPARATOR)
+                .append(this.numResults).append(Constant.SEPARATOR).
+                append(this.sender.getHost()).append(Constant.SEPARATOR)
+                .append(this.sender.getPort()).append(Constant.SEPARATOR).append(this.hops);
         for (String result : results) {
-            buffer.append(" ").append(result);
+            message.append(Constant.SEPARATOR).append(result);
         }
-        return buffer.toString();
+        return message.toString();
     }
 }
