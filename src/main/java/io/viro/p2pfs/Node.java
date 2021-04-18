@@ -114,12 +114,18 @@ public class Node {
     }
 
     public void removeNeighbour(NodeCredentials sender) {
-        int i =0;
-        for (NodeCredentials credentials: routingTable){
-            if (sender.getHost().equals(credentials.getHost()) & sender.getHost().equals(credentials.getHost())){
-                routingTable.remove(i);
+        int i = 0;
+        int index = -1;
+        for (NodeCredentials credentials : routingTable) {
+            if (sender.getHost().equals(credentials.getHost()) &&
+                    sender.getPort() == credentials.getPort()) {
+                index = i;
+                break;
             }
             i++;
+        }
+        if (index >= 0) {
+            routingTable.remove(index);
         }
     }
 }

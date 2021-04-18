@@ -1,7 +1,6 @@
 package io.viro.p2pfs.telnet;
 
-import io.viro.p2pfs.telnet.credentials.NodeCredentials;
-import io.viro.p2pfs.telnet.message.send.LeaveRequestSent;
+import io.viro.p2pfs.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,10 +30,11 @@ public class P2PFSCommander implements Runnable {
             Scanner scanner = new Scanner(System.in);
             String command = scanner.nextLine();
             if (command.equals("exit")) {
-                for (NodeCredentials nodeCredentials : client.getNode().getRoutingTable()) {
-                    this.client.leave(new LeaveRequestSent(this.client.getNode().getCredentials(),
-                            nodeCredentials));
-                }
+//                for (NodeCredentials nodeCredentials : client.getNode().getRoutingTable()) {
+//                    this.client.leave(new LeaveRequestSent(this.client.getNode().getCredentials(),
+//                            nodeCredentials));
+//                }
+                Util.print("exit");
             }
             logger.info("Node " + this.client.getNode().getCredentials().getHost() + "has gracefully left!");
         }

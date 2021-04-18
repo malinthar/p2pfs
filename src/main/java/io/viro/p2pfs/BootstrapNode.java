@@ -1,7 +1,6 @@
 package io.viro.p2pfs;
 
 import io.viro.p2pfs.telnet.P2PFSClient;
-import io.viro.p2pfs.telnet.P2PFSCommander;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
@@ -21,9 +20,9 @@ public class BootstrapNode {
     public static void main(String[] args) {
         BasicConfigurator.configure();
         if (args.length == 5) {
-            logger.info("_________Arguments_________");
+            Util.print("_________Arguments_________");
             for (String arg : args) {
-                logger.info(arg);
+                Util.print(arg);
             }
             //Node parameters.
             String nodeIp = args[0];
@@ -38,16 +37,16 @@ public class BootstrapNode {
 
             //Create a new node
             List<String> filesList = Constant.getFilesRand();
-            logger.info("_________Files list of the node_________");
+            Util.print("_________Files list of the node_________");
             for (String file : filesList) {
-                logger.info(file);
+                Util.print(file);
             }
             Node node = new Node(credentials, filesList);
 
             //create a new client for distributed system communication
             P2PFSClient client = new P2PFSClient(node, bootstrapServer);
             client.registerNode();
-            new P2PFSCommander(client);
+            //new P2PFSCommander(client);
 
             //List of search queries in random order.
             List<String> searchQueries =
@@ -77,6 +76,8 @@ public class BootstrapNode {
                 }
                 break;
             }
+            Util.print("My queries are done! I'm leaving");
+            client.leave();
 
         } else {
             logger.error("The number of inputs are incorrect");

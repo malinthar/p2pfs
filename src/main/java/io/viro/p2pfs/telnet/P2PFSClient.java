@@ -2,6 +2,7 @@ package io.viro.p2pfs.telnet;
 
 import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.Node;
+import io.viro.p2pfs.Util;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
 import io.viro.p2pfs.telnet.message.send.HeartbeatResponseSent;
@@ -24,6 +25,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
@@ -37,6 +39,7 @@ public class P2PFSClient implements Runnable {
     NodeCredentials bootstrapServer;
     P2PFSMessageProcessor processor;
     Boolean isRegistered = false;
+    private final AtomicBoolean running = new AtomicBoolean(false);
 
     private static final Logger logger = LoggerFactory.getLogger(P2PFSClient.class);
 
@@ -49,10 +52,10 @@ public class P2PFSClient implements Runnable {
 
     public void run() {
         try {
-            logger.info("New node created at " + node.getCredentials().getHost() +
+            Util.print("New node created at " + node.getCredentials().getHost() +
                     ":" + node.getCredentials().getPort() + ". Waiting for incoming data...");
             String message;
-            while (true) {
+            while (running.get()) {
                 //Massage Receiver
                 byte[] buffer = new byte[65536];
                 DatagramPacket incoming = new DatagramPacket(buffer, buffer.length);
@@ -86,10 +89,15 @@ public class P2PFSClient implements Runnable {
             this.heartbeatList = new ArrayList<>();
             this.lastHeartbeatTime = 0;
             this.socket = new DatagramSocket(this.node.getCredentials().getPort());
+            this.running.set(true);
             new Thread(this).start();
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
+    }
+
+    public void stop() {
+        running.set(false);
     }
 
     public void sendMessage(Message message) {
@@ -132,7 +140,7 @@ public class P2PFSClient implements Runnable {
         List<String> searchResults = node.searchLocally(searchRequestDto.getKeyword());
         //pass to neighbors
         if (searchResults.isEmpty()) {
-            logger.info("File does not exist locally");
+            Util.print("No hits found for " + searchRequestDto.getKeyword() + " locally");
             List<NodeCredentials> nextNodes = node.searchCache(searchRequestDto.getKeyword());
             if (nextNodes.isEmpty()) {
                 nextNodes = node.getRoutingTable();
@@ -141,7 +149,7 @@ public class P2PFSClient implements Runnable {
                 if (!neighbor.getHost().equals(searchRequestDto.getRequestNodeCredentials().getHost()) &&
                         neighbor.getPort() != searchRequestDto.getRequestNodeCredentials().getPort() &&
                         searchRequestDto.getHopCount() < Constant.MAX_HOP_COUNT) {
-                    logger.info("Forward the search request to neighbor" + " : " + neighbor.getHost());
+                    Util.print("Forward the search request to neighbor" + " : " + neighbor.getHost());
                     SearchRequest searchRequest = new SearchRequest(searchRequestDto, neighbor);
                     searchRequest.incrementHopCountByOne();
                     search(searchRequest);
@@ -150,15 +158,16 @@ public class P2PFSClient implements Runnable {
             return;
         } else {
             if (searchRequestDto.getRequestNodeCredentials().equals(this.node.getCredentials())) {
-                logger.info("Following results were found locally for keywords " + searchRequestDto.getKeyword());
+                Util.print("__________Following results were found locally for keywords " +
+                        searchRequestDto.getKeyword() + "__________");
                 searchResults.forEach(result -> {
-                    logger.info(result);
+                    Util.print(result);
                 });
                 return;
             } else {
-                logger.info("Hits found for keywords " +
+                Util.print("Hits found for keywords " +
                         searchRequestDto.getKeyword() +
-                        "! send SEARCHOK response to search query originator");
+                        "! send SEROK response to search query originator");
                 SearchResponseSent response = new SearchResponseSent(searchRequestDto.getId(),
                         searchRequestDto.getKeyword(),
                         searchRequestDto.getRequestNodeCredentials(),
@@ -172,7 +181,7 @@ public class P2PFSClient implements Runnable {
 
     public void initNewSearch(String query) {
         SearchRequestDTO searchRequestDTO = node.initNewSearch(query);
-        logger.info("Triggered search request for " + searchRequestDTO.getKeyword());
+        Util.print("Triggered search request for " + searchRequestDTO.getKeyword());
         this.triggerSearch(searchRequestDTO);
     }
 
@@ -204,8 +213,12 @@ public class P2PFSClient implements Runnable {
         sendMessage(message);
     }
 
-    public void leave(LeaveRequestSent message) {
-        sendMessage(message);
+    public void leave() {
+        for (NodeCredentials nodeCredentials : this.getNode().getRoutingTable()) {
+            sendMessage(new LeaveRequestSent(this.getNode().getCredentials(),
+                    nodeCredentials));
+        }
+        this.stop();
     }
 
 }
