@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Represents a node.
  */
-public class Node {
+public class    Node {
     NodeCredentials credentials;
     List<String> files;
     List<NodeCredentials> routingTable; //routing table

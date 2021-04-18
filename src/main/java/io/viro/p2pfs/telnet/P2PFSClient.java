@@ -4,12 +4,7 @@ import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.Node;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
-import io.viro.p2pfs.telnet.message.send.JoinRequestSent;
-import io.viro.p2pfs.telnet.message.send.JoinResponseSent;
-import io.viro.p2pfs.telnet.message.send.Message;
-import io.viro.p2pfs.telnet.message.send.RegisterRequest;
-import io.viro.p2pfs.telnet.message.send.SearchRequest;
-import io.viro.p2pfs.telnet.message.send.SearchResponseSent;
+import io.viro.p2pfs.telnet.message.send.*;
 import io.viro.p2pfs.telnet.processor.P2PFSMessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,5 +147,12 @@ public class P2PFSClient implements Runnable {
         return isRegistered;
     }
 
+    public void nodeOK(HeartbeatResponseSent message) {
+        sendMessage(message);
+    }
 
+
+    public void leaveOK(LeaveGracefullyResponseSent message) {
+        sendMessage(message);
+    }
 }

@@ -2,6 +2,8 @@ package io.viro.p2pfs.telnet.processor;
 
 import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
+import io.viro.p2pfs.telnet.message.receive.*;
+
 import io.viro.p2pfs.telnet.message.receive.JoinRequestReceived;
 import io.viro.p2pfs.telnet.message.receive.JoinResponseReceived;
 import io.viro.p2pfs.telnet.message.receive.ReceivedMessage;
@@ -71,6 +73,19 @@ public class P2PFSMessageParser {
             SearchRequestReceived searchRequestReceived =
                     new SearchRequestReceived(searchId, requestOwner, keyword, hops);
             return searchRequestReceived;
+        }
+        if (command.equals(Constant.CHECK_NODE)) {
+            return new HeartbeatRequestReceived();
+        }
+        if (command.equals(Constant.NODEOK)) {
+            return new HeartbeatResponse();
+        }
+        if (command.equals(Constant.LEAVE)) {
+            return new LeaveGracefullyRequestReceived();
+        }
+        if (command.equals(Constant.LEAVEOK)) {
+            int code = Integer.parseInt(tokenizer.nextToken());
+            return new LeaveGracefullyResponse(code);
         }
         if (command.equals(Constant.SEARCHOK)) {
             logger.info(message);
