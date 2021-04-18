@@ -78,6 +78,7 @@ public class P2PFSMessageProcessor {
                             int randomNumber = random.nextInt(nodesList.size());
                             NodeCredentials neighbor = nodesList.get(randomNumber);
                             nodesList.remove(randomNumber);
+                            logger.info("Sent join request to " + neighbor.getHost());
                             client.join(new JoinRequestSent(client.getNode().getCredentials(), neighbor));
                         }
                     }
@@ -86,35 +87,40 @@ public class P2PFSMessageProcessor {
             }
         } else if (response instanceof JoinResponseReceived) {
             if (((JoinResponseReceived) response).getCode() == Constant.JOIN_SUCCESS) {
-                //todo: Logic to be discussed.
                 this.client.getNode().addNeighbor(sender);
-                logger.info("Node ", sender.getHost(), "is added to routing table of Node ",
-                        this.client.getNode().getCredentials().getHost(), " after JOINOK");
-            } //todo: JoinResponse is an error what to do?
+                logger.info("Node " + sender.getHost() + " is added to routing table");
+            } else {
+                //todo: JoinResponse is an error what to do?
+                logger.info("Error in joining with node ", sender.getHost());
+            }
         } else if (response instanceof JoinRequestReceived) {
-            logger.info("Join request received from ", sender.getHost());
+            logger.info("Join request received from " + ((JoinRequestReceived) response).getSender().getHost());
             if (this.client.getNode().getNeighborCount() < 6) {
-                this.client.getNode().addNeighbor(sender);
+                this.client.getNode().addNeighbor(((JoinRequestReceived) response).getSender());
+                logger.info("Node " + ((JoinRequestReceived) response).getSender().getHost() +
+                        " is added to routing table");
                 this.client.joinOK(new JoinResponseSent(this.client.getNode().getCredentials(),
-                        sender, Constant.JOIN_SUCCESS));
+                        ((JoinRequestReceived) response).getSender(), Constant.JOIN_SUCCESS));
+
             } else {
                 //todo:What to do in this case. Here send the error code
                 this.client.getNode().addSecondaryNeighbor(sender);
+                logger.info("Routing table is full, sent error code");
                 this.client.joinOK(new JoinResponseSent(this.client.getNode().getCredentials(),
                         sender, Constant.JOIN_ERROR));
+
             }
         } else if (response instanceof SearchRequestReceived) {
-            logger.info("Search request received from ", sender.getHost());
+            logger.info("Search request received from " + sender.getHost());
             SearchRequestReceived searchRequestReceived = (SearchRequestReceived) response;
             SearchRequestDTO searchRequestDTO = new SearchRequestDTO(searchRequestReceived);
             this.client.triggerSearch(searchRequestDTO);
 
         } else if (response instanceof SearchResponseReceived) {
-            logger.info("search response received from", sender.getHost());
-
+            logger.info("Search response received from " + sender.getHost());
             SearchResponseReceived searchResultResponse = (SearchResponseReceived) response;
             if (searchResultResponse.getResults().size() != 0) {
-                logger.info("Hit! the files have been found at ",
+                logger.info("Hit! the files have been found at " +
                         sender.getHost() + " files are :" + searchResultResponse.getResults().toString());
                 this.client.getNode()
                         .addToCache(searchResultResponse.getCredential(), searchResultResponse.getKeyword());
@@ -142,6 +148,5 @@ public class P2PFSMessageProcessor {
         } else {
             logger.info("no handler");
         }
-
     }
 }

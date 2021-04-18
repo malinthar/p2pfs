@@ -20,15 +20,15 @@ public class NodeCredentials {
     }
 
     public int getPort() {
-        return port;
+        return this.port;
     }
 
     public String getHost() {
-        return host;
+        return this.host;
     }
 
     public String getUserName() {
-        return userName;
+        return this.userName;
     }
 
     @Override

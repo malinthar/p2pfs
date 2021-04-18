@@ -50,18 +50,17 @@ public class P2PFSClient implements Runnable {
 
     public void run() {
         try {
-            logger.info("New node created at" + node.getCredentials().getPort() + ". Waiting for incoming data...");
-            String messege;
+            logger.info("New node created at " + node.getCredentials().getHost() +
+                    ":" + node.getCredentials().getPort() + ". Waiting for incoming data...");
+            String message;
             while (true) {
                 //Massage Receiver
                 byte[] buffer = new byte[65536];
                 DatagramPacket incoming = new DatagramPacket(buffer, buffer.length);
                 socket.receive(incoming);
                 byte[] data = incoming.getData();
-                messege = new String(data, 0, incoming.getLength());
-                logger.info(incoming.getAddress().getHostAddress() + " : " +
-                        incoming.getPort() + " - " + messege);
-                this.processor.processMessage(messege,
+                message = new String(data, 0, incoming.getLength());
+                this.processor.processMessage(message,
                         new NodeCredentials(incoming.getAddress().getHostAddress(), incoming.getPort()));
 
                 //HeartBeatings
@@ -132,33 +131,43 @@ public class P2PFSClient implements Runnable {
         List<String> searchResults = node.searchLocally(searchRequestDto.getKeyword());
         //pass to neighbors
         if (searchResults.isEmpty()) {
+            logger.info("File does not exist in locally");
             List<NodeCredentials> nextNodes = node.searchCache(searchRequestDto.getKeyword());
             if (nextNodes.isEmpty()) {
                 nextNodes = node.getRoutingTable();
             }
-            logger.info("File does not exist in " + node.getCredentials().getUserName());
             nextNodes.forEach((neighbor) -> {
-                logger.info("Forward SEARCH to neighbor" + " : " + neighbor.getUserName());
-                SearchRequest searchRequest = new SearchRequest(searchRequestDto, neighbor);
-                searchRequest.incrementHopCountByOne();
-                search(searchRequest);
+                if (!neighbor.getHost().equals(searchRequestDto.getRequestNodeCredentials().getHost()) &&
+                        neighbor.getPort() != searchRequestDto.getRequestNodeCredentials().getPort() &&
+                        searchRequestDto.getHopCount() < Constant.MAX_HOP_COUNT) {
+                    logger.info("Forward SEARCH to neighbor" + " : " + neighbor.getHost());
+                    SearchRequest searchRequest = new SearchRequest(searchRequestDto, neighbor);
+                    searchRequest.incrementHopCountByOne();
+                    search(searchRequest);
+                }
             });
             return;
+        } else {
+            if (searchRequestDto.getRequestNodeCredentials().equals(this.node.getCredentials())) {
+                logger.info("Hits found locally!");
+                return;
+            } else {
+                logger.info("Hits found! send SEARCHOK response to search query originator");
+                SearchResponseSent response = new SearchResponseSent(searchRequestDto.getId(),
+                        searchRequestDto.getKeyword(),
+                        searchRequestDto.getRequestNodeCredentials(),
+                        this.node.getCredentials(),
+                        searchRequestDto.getHopCount(), searchResults);
+                searchOk(response);
+            }
         }
-
         //file found todo://hits are not exactly matching though, might not get the best results
-        logger.info("Hits found! send SEARCHOK response to search query originator");
-        SearchResponseSent response = new SearchResponseSent(searchRequestDto.getId(),
-                searchRequestDto.getKeyword(),
-                searchRequestDto.getRequestNodeCredentials(),
-                this.node.getCredentials(),
-                searchRequestDto.getHopCount(), searchResults);
-        searchOk(response);
+
     }
 
     public void initNewSearch(String query) {
         SearchRequestDTO searchRequestDTO = node.initNewSearch(query);
-        logger.info("\nTriggered search request for " + searchRequestDTO.getKeyword());
+        logger.info("Triggered search request for " + searchRequestDTO.getKeyword());
         this.triggerSearch(searchRequestDTO);
     }
 
