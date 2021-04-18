@@ -8,6 +8,7 @@ import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 public class JoinResponseReceived extends ReceivedMessage {
     private int code;
     private NodeCredentials sender;
+
     public JoinResponseReceived(NodeCredentials sender, int code) {
         this.code = code;
         this.sender = sender;

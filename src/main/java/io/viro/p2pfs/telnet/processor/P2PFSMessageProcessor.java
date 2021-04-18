@@ -130,22 +130,28 @@ public class P2PFSMessageProcessor {
 
             //todo: Complete
         } else if (response instanceof HeartbeatRequestReceived) {
-            Util.print("Heartbeat request received from " + sender.getHost());
-            this.client.nodeOK(
-                    new HeartbeatResponseSent(this.client.getNode().getCredentials(), sender, Constant.NODE_ALIVE));
+            HeartbeatRequestReceived res = (HeartbeatRequestReceived) response;
+            Util.print("Heartbeat request received from " + res.getSender().getHost());
+            this.client.nodeOK(new HeartbeatResponseSent(
+                    this.client.getNode().getCredentials(),
+                    res.getSender(),
+                    Constant.NODE_ALIVE));
         } else if (response instanceof HeartbeatResponse) {
-            Util.print("Heartbeat Response received from " + sender.getHost());
-            this.client.removeNodeFromHeartBeatList(sender);
+            HeartbeatResponse res = (HeartbeatResponse) response;
+            Util.print("Heartbeat Response received from " + res.getSender().getHost());
+            if (res.getCode() == Constant.NODE_ALIVE) {
+                this.client.removeNodeFromHeartBeatList(res.getSender());
+            }
         } else if (response instanceof LeaveGracefullyRequestReceived) {
-            Util.print("Leave Gracefully request received from " +
-                    ((LeaveGracefullyRequestReceived) response).getSender().getHost());
-            this.client.getNode().removeNeighbour(
-                    ((LeaveGracefullyRequestReceived) response).getSender());
+            LeaveGracefullyRequestReceived res = (LeaveGracefullyRequestReceived) response;
+            Util.print("Leave Gracefully request received from " + res.getSender().getHost());
+            this.client.getNode().removeNeighbour(res.getSender());
             this.client.leaveOK(new LeaveGracefullyResponseSent(
-                    this.client.getNode().getCredentials(), sender, Constant.LEAVE_SUCCESS));
+                    this.client.getNode().getCredentials(), res.getSender(), Constant.LEAVE_SUCCESS));
         } else if (response instanceof LeaveGracefullyResponse) {
-            Util.print("Leave Gracefully response received from " + sender.getHost());
-            if (((LeaveGracefullyResponse) response).getCode() == Constant.LEAVE_SUCCESS) {
+            LeaveGracefullyResponse res = (LeaveGracefullyResponse) response;
+//            Util.print("Leave Gracefully response received from " + res.getSender().getHost());
+            if (res.getCode() == Constant.LEAVE_SUCCESS) {
                 Util.print("Good Bye!!!");
             } else {
                 Util.print("Error leaving!");
