@@ -70,7 +70,7 @@ public class P2PFSClient implements Runnable {
                             nodeAlive(new HeartbeatSent(this.node.getCredentials(), nodeCredentials));
                         } else {
                             //ungracefully departure
-                            this.node.getRoutingTable().remove(nodeCredentials);
+                            this.node.removeNeighbour(nodeCredentials);
                         }
                     }
                     lastHeartbeatTime = System.currentTimeMillis();
@@ -83,7 +83,9 @@ public class P2PFSClient implements Runnable {
 
     public void init() {
         try {
-            socket = new DatagramSocket(this.node.getCredentials().getPort());
+            this.heartbeatList = new ArrayList<>();
+            this.lastHeartbeatTime = 0;
+            this.socket = new DatagramSocket(this.node.getCredentials().getPort());
             new Thread(this).start();
         } catch (Exception e) {
             logger.error(e.getMessage());
