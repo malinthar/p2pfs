@@ -57,12 +57,12 @@ public class P2PFSClient implements Runnable {
 
                 //HeartBeatings
                 if(System.currentTimeMillis()-lastHeartbeatTime>60*1000){
-                    for (NodeCredentials nodeCredentials:this.node.getNeighbors()){
+                    for (NodeCredentials nodeCredentials:this.node.getRoutingTable()){
                         if (!heartbeatList.contains(nodeCredentials)){
                             nodeAlive(new HeartbeatSent(this.node.getCredentials(),nodeCredentials));
                         }else {
                             //ungracefully departure
-                            this.node.getNeighbors().remove(nodeCredentials);
+                            this.node.getRoutingTable().remove(nodeCredentials);
                         }
                     }
                     lastHeartbeatTime=System.currentTimeMillis();

@@ -123,10 +123,10 @@ public class P2PFSMessageProcessor {
             this.client.nodeOK(new HeartbeatResponseSent(this.client.getNode().getCredentials(), sender, Constant.NODE_ALIVE));
         } else if (response instanceof HeartbeatResponse) {
             logger.info("Heartbeat Response received from ", sender.getHost());
-            //Todo: heart beat processor
+            //Todo: heart beat processor, remove from the queue
         } else if (response instanceof LeaveGracefullyRequestReceived) {
             logger.info("Leave Gracefully request received from ", sender.getHost());
-            List<NodeCredentials> neighbours = this.client.getNode().getNeighbors();
+            List<NodeCredentials> neighbours = this.client.getNode().getRoutingTable();
             neighbours.remove(sender);
             this.client.leaveOK(new LeaveGracefullyResponseSent(this.client.getNode().getCredentials(), sender, Constant.LEAVE_SUCCESS));
         } else if (response instanceof LeaveGracefullyResponse) {
