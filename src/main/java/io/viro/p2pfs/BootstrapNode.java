@@ -54,9 +54,7 @@ public class BootstrapNode {
             List<String> searchQueries =
                     Arrays.asList("Twilight", "Jack", "American_Idol", "Happy_Feet", "Twilight_saga", "Happy_Feet",
                             "Feet");
-
             Collections.shuffle(searchQueries);
-
             while (true) {
                 try {
                     Thread.sleep(1000);
@@ -69,8 +67,8 @@ public class BootstrapNode {
                 }
                 //search function here
                 for (int i = 0; i < searchQueries.size(); i++) {
-                    String query = searchQueries.get(i);
-                    client.initNewSearch(query);
+                    //String query = searchQueries.get(i);
+                   // client.initNewSearch(query);
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException e) {

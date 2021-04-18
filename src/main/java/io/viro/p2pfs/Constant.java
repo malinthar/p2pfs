@@ -43,6 +43,8 @@ public class Constant {
     private static final List<String> QUERIES;
     private static final Random random = new Random();
 
+    public static final int MAX_HOP_COUNT = 10;
+
     static {
         REG_ERROR_CODES = Arrays.asList(COMMAND_ERROR, ALREADY_REGISTERED, ALREADY_REGISTERED_TO_ME, BS_FULL);
         FILES = Arrays.asList("Adventures of Tintin", "Jack and Jill", "Glee",
