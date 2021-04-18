@@ -25,6 +25,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
@@ -38,6 +39,7 @@ public class P2PFSClient implements Runnable {
     NodeCredentials bootstrapServer;
     P2PFSMessageProcessor processor;
     Boolean isRegistered = false;
+    private final AtomicBoolean running = new AtomicBoolean(false);
 
     private static final Logger logger = LoggerFactory.getLogger(P2PFSClient.class);
 
@@ -53,7 +55,7 @@ public class P2PFSClient implements Runnable {
             Util.print("New node created at " + node.getCredentials().getHost() +
                     ":" + node.getCredentials().getPort() + ". Waiting for incoming data...");
             String message;
-            while (true) {
+            while (running.get()) {
                 //Massage Receiver
                 byte[] buffer = new byte[65536];
                 DatagramPacket incoming = new DatagramPacket(buffer, buffer.length);
@@ -87,10 +89,15 @@ public class P2PFSClient implements Runnable {
             this.heartbeatList = new ArrayList<>();
             this.lastHeartbeatTime = 0;
             this.socket = new DatagramSocket(this.node.getCredentials().getPort());
+            this.running.set(true);
             new Thread(this).start();
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
+    }
+
+    public void stop() {
+        running.set(false);
     }
 
     public void sendMessage(Message message) {
@@ -206,8 +213,12 @@ public class P2PFSClient implements Runnable {
         sendMessage(message);
     }
 
-    public void leave(LeaveRequestSent message) {
-        sendMessage(message);
+    public void leave() {
+        for (NodeCredentials nodeCredentials : this.getNode().getRoutingTable()) {
+            sendMessage(new LeaveRequestSent(this.getNode().getCredentials(),
+                    nodeCredentials));
+        }
+        this.stop();
     }
 
 }

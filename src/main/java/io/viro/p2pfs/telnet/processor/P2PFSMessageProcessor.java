@@ -137,17 +137,18 @@ public class P2PFSMessageProcessor {
             Util.print("Heartbeat Response received from " + sender.getHost());
             this.client.removeNodeFromHeartBeatList(sender);
         } else if (response instanceof LeaveGracefullyRequestReceived) {
-            Util.print("Leave Gracefully request received from " + sender.getHost());
-            List<NodeCredentials> neighbours = this.client.getNode().getRoutingTable();
-            neighbours.remove(sender);
-            logger.info("Leave Gracefully request received from ", sender.getHost());
-            this.client.getNode().removeNeighbour(sender);
+            Util.print("Leave Gracefully request received from " +
+                    ((LeaveGracefullyRequestReceived) response).getSender().getHost());
+            this.client.getNode().removeNeighbour(
+                    ((LeaveGracefullyRequestReceived) response).getSender());
             this.client.leaveOK(new LeaveGracefullyResponseSent(
                     this.client.getNode().getCredentials(), sender, Constant.LEAVE_SUCCESS));
         } else if (response instanceof LeaveGracefullyResponse) {
             Util.print("Leave Gracefully response received from " + sender.getHost());
             if (((LeaveGracefullyResponse) response).getCode() == Constant.LEAVE_SUCCESS) {
-                //todo: what have to do when leave
+                Util.print("Good Bye!!!");
+            } else {
+                Util.print("Error leaving!");
             }
         } else {
             logger.info("no handler");

@@ -90,7 +90,10 @@ public class P2PFSMessageParser {
                 return new HeartbeatResponse();
             }
             if (command.equals(Constant.LEAVE)) {
-                return new LeaveGracefullyRequestReceived();
+                String ip = tokenizer.nextToken();
+                int port = Integer.parseInt(tokenizer.nextToken());
+                NodeCredentials sender = new NodeCredentials(ip, port, null);
+                return new LeaveGracefullyRequestReceived(sender);
             }
             if (command.equals(Constant.LEAVEOK)) {
                 int code = Integer.parseInt(tokenizer.nextToken());

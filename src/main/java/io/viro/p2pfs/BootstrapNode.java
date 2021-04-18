@@ -1,7 +1,6 @@
 package io.viro.p2pfs;
 
 import io.viro.p2pfs.telnet.P2PFSClient;
-import io.viro.p2pfs.telnet.P2PFSCommander;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
@@ -47,7 +46,7 @@ public class BootstrapNode {
             //create a new client for distributed system communication
             P2PFSClient client = new P2PFSClient(node, bootstrapServer);
             client.registerNode();
-            new P2PFSCommander(client);
+            //new P2PFSCommander(client);
 
             //List of search queries in random order.
             List<String> searchQueries =
@@ -77,6 +76,8 @@ public class BootstrapNode {
                 }
                 break;
             }
+            Util.print("My queries are done! I'm leaving");
+            client.leave();
 
         } else {
             logger.error("The number of inputs are incorrect");
