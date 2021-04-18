@@ -15,6 +15,7 @@ import io.viro.p2pfs.telnet.message.receive.ReceivedMessage;
 import io.viro.p2pfs.telnet.message.receive.RegisterResponse;
 import io.viro.p2pfs.telnet.message.receive.SearchRequestReceived;
 import io.viro.p2pfs.telnet.message.receive.SearchResponseReceived;
+import io.viro.p2pfs.telnet.message.receive.UnRegisterResponse;
 import io.viro.p2pfs.telnet.message.send.HeartbeatResponseSent;
 import io.viro.p2pfs.telnet.message.send.JoinRequestSent;
 import io.viro.p2pfs.telnet.message.send.JoinResponseSent;
@@ -152,9 +153,22 @@ public class P2PFSMessageProcessor {
             LeaveGracefullyResponse res = (LeaveGracefullyResponse) response;
 //            Util.print("Leave Gracefully response received from " + res.getSender().getHost());
             if (res.getCode() == Constant.LEAVE_SUCCESS) {
+                this.client.unRegisterNode();
                 Util.print("Good Bye!!!");
             } else {
                 Util.print("Error leaving!");
+            }
+        } else if (response instanceof UnRegisterResponse) {
+            UnRegisterResponse res = (UnRegisterResponse) response;
+            switch (res.errorCode) {
+                case Constant.UNREG_SUCCESS:
+                    Util.print("Successfully Unregistered in the Bootstrap!");
+                    break;
+                case Constant.UNREG_ERROR:
+                    Util.print("Error while Unregistering in the Bootstrap!");
+                    break;
+                default:
+                    logger.info("no error handler");
             }
         } else {
             logger.info("no handler");

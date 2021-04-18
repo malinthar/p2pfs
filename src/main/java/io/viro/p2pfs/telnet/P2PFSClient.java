@@ -15,6 +15,7 @@ import io.viro.p2pfs.telnet.message.send.Message;
 import io.viro.p2pfs.telnet.message.send.RegisterRequest;
 import io.viro.p2pfs.telnet.message.send.SearchRequest;
 import io.viro.p2pfs.telnet.message.send.SearchResponseSent;
+import io.viro.p2pfs.telnet.message.send.UnRegisterRequest;
 import io.viro.p2pfs.telnet.processor.P2PFSMessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +116,11 @@ public class P2PFSClient implements Runnable {
 
     public void registerNode() {
         Message message = new RegisterRequest(this.node.getCredentials(), bootstrapServer);
+        sendMessage(message);
+    }
+
+    public void unRegisterNode() {
+        Message message = new UnRegisterRequest(this.node.getCredentials(), bootstrapServer);
         sendMessage(message);
     }
 
