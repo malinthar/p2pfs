@@ -137,8 +137,7 @@ public class P2PFSMessageProcessor {
             this.client.removeNodeFromHeartBeatList(sender);
         } else if (response instanceof LeaveGracefullyRequestReceived) {
             logger.info("Leave Gracefully request received from ", sender.getHost());
-            List<NodeCredentials> neighbours = this.client.getNode().getRoutingTable();
-            neighbours.remove(sender);
+            this.client.getNode().removeNeighbour(sender);
             this.client.leaveOK(new LeaveGracefullyResponseSent(
                     this.client.getNode().getCredentials(), sender, Constant.LEAVE_SUCCESS));
         } else if (response instanceof LeaveGracefullyResponse) {

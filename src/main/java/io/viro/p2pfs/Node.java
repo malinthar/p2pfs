@@ -112,4 +112,14 @@ public class Node {
         keywords.add(keyword);
         this.cache.put(credentials, keywords);
     }
+
+    public void removeNeighbour(NodeCredentials sender) {
+        int i =0;
+        for (NodeCredentials credentials: routingTable){
+            if (sender.getHost().equals(credentials.getHost()) & sender.getHost().equals(credentials.getHost())){
+                routingTable.remove(i);
+            }
+            i++;
+        }
+    }
 }

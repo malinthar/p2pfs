@@ -63,18 +63,18 @@ public class P2PFSClient implements Runnable {
                         new NodeCredentials(incoming.getAddress().getHostAddress(), incoming.getPort()));
 
                 //HeartBeatings
-                if (System.currentTimeMillis() - lastHeartbeatTime > 60 * 1000) {
-                    for (NodeCredentials nodeCredentials : this.node.getRoutingTable()) {
-                        if (!heartbeatList.contains(nodeCredentials)) {
-                            heartbeatList.add(nodeCredentials);
-                            nodeAlive(new HeartbeatSent(this.node.getCredentials(), nodeCredentials));
-                        } else {
-                            //ungracefully departure
-                            this.node.getRoutingTable().remove(nodeCredentials);
-                        }
-                    }
-                    lastHeartbeatTime = System.currentTimeMillis();
-                }
+//                if (System.currentTimeMillis() - lastHeartbeatTime > 60 * 1000) {
+//                    for (NodeCredentials nodeCredentials : this.node.getRoutingTable()) {
+//                        if (!heartbeatList.contains(nodeCredentials)) {
+//                            heartbeatList.add(nodeCredentials);
+//                            nodeAlive(new HeartbeatSent(this.node.getCredentials(), nodeCredentials));
+//                        } else {
+//                            //ungracefully departure
+//                            this.node.removeNeighbour(nodeCredentials);
+//                        }
+//                    }
+//                    lastHeartbeatTime = System.currentTimeMillis();
+//                }
             }
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -83,7 +83,9 @@ public class P2PFSClient implements Runnable {
 
     public void init() {
         try {
-            socket = new DatagramSocket(this.node.getCredentials().getPort());
+            this.heartbeatList = new ArrayList<>();
+            this.lastHeartbeatTime = 0;
+            this.socket = new DatagramSocket(this.node.getCredentials().getPort());
             new Thread(this).start();
         } catch (Exception e) {
             logger.error(e.getMessage());
