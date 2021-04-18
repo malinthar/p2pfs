@@ -10,12 +10,14 @@ public class SearchRequestReceived extends ReceivedMessage {
     int searchId;
     NodeCredentials requestOriginator;
     String keyword;
+    int hopCount;
 
-    public SearchRequestReceived(int searchId, NodeCredentials requestOwner, String keyword) {
+    public SearchRequestReceived(int searchId, NodeCredentials requestOwner, String keyword, int hopCount) {
         super();
         this.searchId = searchId;
         this.requestOriginator = requestOwner;
         this.keyword = keyword;
+        this.hopCount = hopCount;
     }
 
     public int getSearchId() {
@@ -40,5 +42,13 @@ public class SearchRequestReceived extends ReceivedMessage {
 
     public void setKeyword(String keyword) {
         this.keyword = keyword;
+    }
+
+    public int getHopCount() {
+        return hopCount;
+    }
+
+    public void setHopCount(int hopCount) {
+        this.hopCount = hopCount;
     }
 }

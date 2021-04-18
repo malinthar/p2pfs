@@ -1,6 +1,7 @@
 package io.viro.p2pfs.telnet.dto;
 
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
+import io.viro.p2pfs.telnet.message.receive.SearchRequestReceived;
 
 /**
  * Search request DTO class.
@@ -18,6 +19,13 @@ public class SearchRequestDTO {
         this.requestNode = requestNode;
         this.keyword = keyword;
         this.hopCount = hopCount;
+    }
+
+    public SearchRequestDTO(SearchRequestReceived requestReceived) {
+        this.id = requestReceived.getSearchId();
+        this.requestNode = requestReceived.getRequestOriginator();
+        this.keyword = requestReceived.getKeyword();
+        this.hopCount = requestReceived.getHopCount();
     }
 
     public int getId() {

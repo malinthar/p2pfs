@@ -1,6 +1,9 @@
 # Compiled class file
 *.class
 
+.gitignore
+io.viro.p2pfs.iml
+
 # Log file
 *.log
 

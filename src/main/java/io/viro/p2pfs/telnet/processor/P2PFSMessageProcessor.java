@@ -3,6 +3,7 @@ package io.viro.p2pfs.telnet.processor;
 import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.telnet.P2PFSClient;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
+import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
 import io.viro.p2pfs.telnet.message.receive.JoinRequestReceived;
 import io.viro.p2pfs.telnet.message.receive.JoinResponseReceived;
 import io.viro.p2pfs.telnet.message.receive.ReceivedMessage;
@@ -98,9 +99,21 @@ public class P2PFSMessageProcessor {
             }
         } else if (response instanceof SearchRequestReceived) {
             logger.info("Search request received from ", sender.getHost());
+            SearchRequestReceived searchRequestReceived = (SearchRequestReceived) response;
+            SearchRequestDTO searchRequestDTO = new SearchRequestDTO(searchRequestReceived);
+            this.client.triggerSearch(searchRequestDTO);
+
         } else if (response instanceof SearchResponseReceived) {
             logger.info("search response received from", sender.getHost());
-            //todo: Complete, when received add to cache in node. @chanuka
+
+            SearchResponseReceived searchResultResponse = (SearchResponseReceived) response;
+            if (searchResultResponse.getResults().size() != 0) {
+                logger.info("Hit! the files have been found at ",
+                        sender.getHost() + " files are :" + searchResultResponse.getResults().toString());
+                this.client.getNode()
+                        .addToCache(searchResultResponse.getCredential(), searchResultResponse.getKeyword());
+            }
+
         } else {
             logger.info("no handler");
         }
