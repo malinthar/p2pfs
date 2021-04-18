@@ -8,7 +8,7 @@ public class LeaveGracefullyResponseSent extends Message {
     private NodeCredentials sender;
     private String msg;
 
-    public LeaveGracefullyResponseSent(NodeCredentials sender, NodeCredentials receiver, String msg) {
+    public LeaveGracefullyResponseSent(NodeCredentials sender, NodeCredentials receiver, int msg) {
         super(receiver);
         this.sender=sender;
         this.msg=msg;

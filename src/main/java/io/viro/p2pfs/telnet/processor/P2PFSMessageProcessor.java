@@ -120,18 +120,18 @@ public class P2PFSMessageProcessor {
             //todo: Complete
         } else if (response instanceof HeartbeatRequestReceived) {
             logger.info("Heartbeat request received from ", sender.getHost());
-            this.client.nodeOK(new HeartbeatResponseSent(this.client.getNode().getCredentials(),sender,Constant.NODEOK));
+            this.client.nodeOK(new HeartbeatResponseSent(this.client.getNode().getCredentials(), sender, Constant.NODE_ALIVE));
         } else if (response instanceof HeartbeatResponse) {
             logger.info("Heartbeat Response received from ", sender.getHost());
             //Todo: heart beat processor
         } else if (response instanceof LeaveGracefullyRequestReceived) {
             logger.info("Leave Gracefully request received from ", sender.getHost());
-            List<NodeCredentials> neighbours=this.client.getNode().getNeighbors();
+            List<NodeCredentials> neighbours = this.client.getNode().getNeighbors();
             neighbours.remove(sender);
-            this.client.leaveOK(new LeaveGracefullyResponseSent(this.client.getNode().getCredentials(),sender,Constant.LEAVEOK));
+            this.client.leaveOK(new LeaveGracefullyResponseSent(this.client.getNode().getCredentials(), sender, Constant.LEAVE_SUCCESS));
         } else if (response instanceof LeaveGracefullyResponse) {
             logger.info("Leave Gracefully response received from ", sender.getHost());
-            if (((LeaveGracefullyResponse)response).getCode()==Constant.LEAVE_SUCCESS){
+            if (((LeaveGracefullyResponse) response).getCode() == Constant.LEAVE_SUCCESS) {
                 //todo: what have to do when leave
             }
         } else {

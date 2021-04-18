@@ -22,6 +22,7 @@ import java.util.List;
 public class P2PFSClient implements Runnable {
     private DatagramSocket socket;
     private Node node;
+    private long lastHeartbeatTime;
     NodeCredentials bootstrapServer;
     P2PFSMessageProcessor processor;
     Boolean isRegistered = false;
@@ -40,6 +41,7 @@ public class P2PFSClient implements Runnable {
             logger.info("New node created at" + node.getCredentials().getPort() + ". Waiting for incoming data...");
             String messege;
             while (true) {
+                //Massage Receiver
                 byte[] buffer = new byte[65536];
                 DatagramPacket incoming = new DatagramPacket(buffer, buffer.length);
                 socket.receive(incoming);
@@ -49,6 +51,15 @@ public class P2PFSClient implements Runnable {
                         incoming.getPort() + " - " + messege);
                 this.processor.processMessage(messege,
                         new NodeCredentials(incoming.getAddress().getHostAddress(), incoming.getPort()));
+
+                //HeartBeatings
+                if(System.currentTimeMillis()-lastHeartbeatTime>60*1000){
+                    for (NodeCredentials nodeCredentials:this.node.getNeighbors()){
+                        nodeAlive(new HeartbeatSent(this.node.getCredentials(),nodeCredentials));
+                    }
+                    lastHeartbeatTime=System.currentTimeMillis();
+                }
+
 
             }
         } catch (IOException e) {
@@ -147,10 +158,13 @@ public class P2PFSClient implements Runnable {
         return isRegistered;
     }
 
-    public void nodeOK(HeartbeatResponseSent message) {
+    public void nodeAlive(HeartbeatSent message) {
         sendMessage(message);
     }
 
+    public void nodeOK(HeartbeatResponseSent message) {
+        sendMessage(message);
+    }
 
     public void leaveOK(LeaveGracefullyResponseSent message) {
         sendMessage(message);
