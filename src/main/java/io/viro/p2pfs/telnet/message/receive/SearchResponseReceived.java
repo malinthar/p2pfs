@@ -11,14 +11,17 @@ import java.util.List;
 
 public class SearchResponseReceived extends ReceivedMessage {
     private int searchId;
+    private String keyword;
     private NodeCredentials credential;
     private int numResults;
     private int hops;
     private List<String> results;
 
-    public SearchResponseReceived(int searchId, NodeCredentials credential, int hops, List<String> results) {
+    public SearchResponseReceived(int searchId, String keyword, NodeCredentials credential, int hops,
+                                  List<String> results) {
 
         this.searchId = searchId;
+        this.keyword = keyword;
         this.credential = credential;
         this.results = results;
         this.numResults = results.size();
@@ -65,9 +68,13 @@ public class SearchResponseReceived extends ReceivedMessage {
         this.hops = hops;
     }
 
+    public String getKeyword() {
+        return keyword;
+    }
+
     public String getMessage() {
         String message = Constant.SEARCHOK;
-        message += " " + searchId + " " + this.numResults + " " + this.credential.getHost() + " " +
+        message += " " + searchId + " " + this.keyword + " " + this.numResults + " " + this.credential.getHost() + " " +
                 this.credential.getPort() + " " + this.hops;
         StringBuffer buffer = new StringBuffer(message);
         for (String result : results) {

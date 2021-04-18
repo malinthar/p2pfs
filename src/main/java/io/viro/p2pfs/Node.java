@@ -97,4 +97,15 @@ public class Node {
         activeSearchDetails.put(searchRequestDTO.getId(), searchRequestDTO);
         return searchRequestDTO;
     }
+
+    public void addToCache(NodeCredentials credentials, String keyword) {
+        if (this.cache.containsKey(credentials)) {
+            this.cache.get(credentials).add(keyword);
+            return;
+        }
+
+        ArrayList<String> keywords = new ArrayList<String>();
+        keywords.add(keyword);
+        this.cache.put(credentials, keywords);
+    }
 }

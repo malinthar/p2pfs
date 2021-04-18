@@ -7,6 +7,7 @@ import io.viro.p2pfs.telnet.message.receive.JoinResponseReceived;
 import io.viro.p2pfs.telnet.message.receive.ReceivedMessage;
 import io.viro.p2pfs.telnet.message.receive.RegisterResponse;
 import io.viro.p2pfs.telnet.message.receive.SearchRequestReceived;
+import io.viro.p2pfs.telnet.message.receive.SearchResponseReceived;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,13 +66,33 @@ public class P2PFSMessageParser {
             String host = tokenizer.nextToken();
             int port = Integer.parseInt(tokenizer.nextToken());
             String keyword = tokenizer.nextToken();
-//            int hops = Integer.parseInt(st.nextToken());
+            int hops = Integer.parseInt(tokenizer.nextToken());
             NodeCredentials requestOwner = new NodeCredentials(host, port, null);
-            SearchRequestReceived searchRequestReceived = new SearchRequestReceived(searchId, requestOwner, keyword);
+            SearchRequestReceived searchRequestReceived =
+                    new SearchRequestReceived(searchId, requestOwner, keyword, hops);
             return searchRequestReceived;
         }
         if (command.equals(Constant.SEARCHOK)) {
             logger.info(message);
+            int searchId = Integer.parseInt(tokenizer.nextToken());
+            String keyword = tokenizer.nextToken();
+            int numResults = Integer.parseInt(tokenizer.nextToken());
+            String ip = tokenizer.nextToken();
+            int port = Integer.parseInt(tokenizer.nextToken());
+            int hops = Integer.parseInt(tokenizer.nextToken());
+
+            List<String> results = new ArrayList<>();
+            NodeCredentials sentNodeCredentials = new NodeCredentials(ip, port, null);
+
+            if (numResults == 0 || numResults == Constant.SEARCH_ERROR) {
+                return new SearchResponseReceived(searchId, keyword, sentNodeCredentials, hops, results);
+            }
+
+            for (int i = 0; i < numResults; i++) {
+                results.add(tokenizer.nextToken());
+            }
+
+            return new SearchResponseReceived(searchId, keyword, sentNodeCredentials, hops, results);
         }
         return null;
     }

@@ -127,6 +127,7 @@ public class P2PFSClient implements Runnable {
         //file found todo://hits are not exactly matching though, might not get the best results
         logger.info("Hits found! send SEARCHOK response to search query originator");
         SearchResponseSent response = new SearchResponseSent(searchRequestDto.getId(),
+                searchRequestDto.getKeyword(),
                 searchRequestDto.getRequestNodeCredentials(),
                 this.node.getCredentials(),
                 searchRequestDto.getHopCount(), searchResults);

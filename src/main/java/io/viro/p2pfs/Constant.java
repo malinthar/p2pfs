@@ -28,6 +28,7 @@ public class Constant {
 
     public static final String SEARCHOK = "SEARCHOK";
     private static final List<Integer> REG_ERROR_CODES;
+    public static final int SEARCH_ERROR = 9998;
 
     //Files
     private static final List<String> FILES;
