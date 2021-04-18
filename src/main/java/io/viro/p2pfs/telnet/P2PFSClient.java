@@ -4,13 +4,22 @@ import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.Node;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
-import io.viro.p2pfs.telnet.message.send.*;
+
+import io.viro.p2pfs.telnet.message.send.HeartbeatResponseSent;
+import io.viro.p2pfs.telnet.message.send.HeartbeatSent;
+import io.viro.p2pfs.telnet.message.send.JoinRequestSent;
+import io.viro.p2pfs.telnet.message.send.JoinResponseSent;
+import io.viro.p2pfs.telnet.message.send.LeaveGracefullyResponseSent;
+import io.viro.p2pfs.telnet.message.send.LeaveRequestSent;
+import io.viro.p2pfs.telnet.message.send.Message;
+import io.viro.p2pfs.telnet.message.send.RegisterRequest;
+import io.viro.p2pfs.telnet.message.send.SearchRequest;
+import io.viro.p2pfs.telnet.message.send.SearchResponseSent;
 import io.viro.p2pfs.telnet.processor.P2PFSMessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -56,16 +65,17 @@ public class P2PFSClient implements Runnable {
                         new NodeCredentials(incoming.getAddress().getHostAddress(), incoming.getPort()));
 
                 //HeartBeatings
-                if(System.currentTimeMillis()-lastHeartbeatTime>60*1000){
-                    for (NodeCredentials nodeCredentials:this.node.getRoutingTable()){
-                        if (!heartbeatList.contains(nodeCredentials)){
-                            nodeAlive(new HeartbeatSent(this.node.getCredentials(),nodeCredentials));
-                        }else {
+                if (System.currentTimeMillis() - lastHeartbeatTime > 60 * 1000) {
+                    for (NodeCredentials nodeCredentials : this.node.getRoutingTable()) {
+                        if (!heartbeatList.contains(nodeCredentials)) {
+                            heartbeatList.add(nodeCredentials);
+                            nodeAlive(new HeartbeatSent(this.node.getCredentials(), nodeCredentials));
+                        } else {
                             //ungracefully departure
                             this.node.getRoutingTable().remove(nodeCredentials);
                         }
                     }
-                    lastHeartbeatTime=System.currentTimeMillis();
+                    lastHeartbeatTime = System.currentTimeMillis();
                 }
             }
         } catch (IOException e) {
@@ -172,7 +182,16 @@ public class P2PFSClient implements Runnable {
         sendMessage(message);
     }
 
+    public void removeNodeFromHeartBeatList(NodeCredentials nodeCredentials) {
+        this.heartbeatList.remove(nodeCredentials);
+    }
+
     public void leaveOK(LeaveGracefullyResponseSent message) {
         sendMessage(message);
     }
+
+    public void leave(LeaveRequestSent message) {
+        sendMessage(message);
+    }
+
 }

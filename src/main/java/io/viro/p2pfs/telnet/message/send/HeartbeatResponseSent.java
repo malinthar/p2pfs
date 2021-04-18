@@ -2,7 +2,9 @@ package io.viro.p2pfs.telnet.message.send;
 
 import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
-
+/**
+ * Send a Heartbeat response.
+ */
 public class HeartbeatResponseSent extends Message {
 
     private NodeCredentials sender;
@@ -10,8 +12,8 @@ public class HeartbeatResponseSent extends Message {
 
     public HeartbeatResponseSent(NodeCredentials sender, NodeCredentials receiver, int code) {
         super(receiver);
-        this.sender=sender;
-        this.code=code;
+        this.sender = sender;
+        this.code = code;
     }
 
     @Override
