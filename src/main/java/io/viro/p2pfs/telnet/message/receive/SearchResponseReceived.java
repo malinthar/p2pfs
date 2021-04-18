@@ -6,7 +6,7 @@ import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import java.util.List;
 
 /**
- * Search Response
+ * Search Response.
  */
 
 public class SearchResponseReceived extends ReceivedMessage {
