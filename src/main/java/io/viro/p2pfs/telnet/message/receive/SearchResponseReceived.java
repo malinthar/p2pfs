@@ -12,7 +12,7 @@ import java.util.List;
 public class SearchResponseReceived extends ReceivedMessage {
     private int searchId;
     private String keyword;
-    private NodeCredentials credential;
+    private NodeCredentials sender;
     private int numResults;
     private int hops;
     private List<String> results;
@@ -22,7 +22,7 @@ public class SearchResponseReceived extends ReceivedMessage {
 
         this.searchId = searchId;
         this.keyword = keyword;
-        this.credential = credential;
+        this.sender = credential;
         this.results = results;
         this.numResults = results.size();
         this.hops = hops;
@@ -36,12 +36,12 @@ public class SearchResponseReceived extends ReceivedMessage {
         this.searchId = searchId;
     }
 
-    public NodeCredentials getCredential() {
-        return credential;
+    public NodeCredentials getSender() {
+        return sender;
     }
 
-    public void setCredential(NodeCredentials credential) {
-        this.credential = credential;
+    public void setSender(NodeCredentials sender) {
+        this.sender = sender;
     }
 
     public int getNumResults() {
@@ -74,8 +74,8 @@ public class SearchResponseReceived extends ReceivedMessage {
 
     public String getMessage() {
         String message = Constant.SEARCHOK;
-        message += " " + searchId + " " + this.keyword + " " + this.numResults + " " + this.credential.getHost() + " " +
-                this.credential.getPort() + " " + this.hops;
+        message += " " + searchId + " " + this.keyword + " " + this.numResults + " " + this.sender.getHost() + " " +
+                this.sender.getPort() + " " + this.hops;
         StringBuffer buffer = new StringBuffer(message);
         for (String result : results) {
             buffer.append(" ").append(result);

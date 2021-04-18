@@ -20,7 +20,7 @@ public class Node {
 
     // for search
     HashMap<Integer, SearchRequestDTO> activeSearchDetails = new HashMap<Integer, SearchRequestDTO>();
-    private static int nextSearchId = 0;
+    private int nextSearchId = 0;
 
     Node(NodeCredentials credentials, List<String> files) {
         this.credentials = credentials;
@@ -49,6 +49,7 @@ public class Node {
 
     public void addNeighbor(NodeCredentials neighbor) {
         this.routingTable.add(neighbor);
+        updateRoutingTable();
     }
 
     public void addSecondaryNeighbor(NodeCredentials neighbor) {
@@ -68,16 +69,23 @@ public class Node {
     }
 
     public List<String> getFiles() {
-        return files;
+        return this.files;
     }
 
     public List<String> searchLocally(String keyword) {
+        String[] words = keyword.split("_");
         List<String> results = new ArrayList<>();
-        files.forEach(file -> {
-            if (file.contains(keyword)) {
+        for (String file : this.files) {
+            int count = 0;
+            for (int i = 0; i < words.length; i++) {
+                if (file.contains(words[i])) {
+                    count += 1;
+                }
+            }
+            if (count == words.length) {
                 results.add(file);
             }
-        });
+        }
         return results;
     }
 
@@ -94,6 +102,7 @@ public class Node {
     public SearchRequestDTO initNewSearch(String query) {
 //        List<String> keywordList = Arrays.asList(keywords.split(","));
         SearchRequestDTO searchRequestDTO = new SearchRequestDTO(this.nextSearchId, this.credentials, query, 0);
+        this.nextSearchId++;
         activeSearchDetails.put(searchRequestDTO.getId(), searchRequestDTO);
         return searchRequestDTO;
     }
@@ -127,5 +136,26 @@ public class Node {
         if (index >= 0) {
             routingTable.remove(index);
         }
+        updateRoutingTable();
+    }
+
+    public void updateRoutingTable() {
+        Util.println("___________Routing Table_______________");
+        routingTable.forEach(node -> {
+            Util.print(node.getHost() + " : " + node.getPort());
+        });
+        Util.print("_______________________________________");
+    }
+
+    public void addToActiveSearch(int id, SearchRequestDTO dto) {
+        activeSearchDetails.put(id, dto);
+    }
+
+    public void removeFromActiveSearch(int id) {
+        activeSearchDetails.remove(id);
+    }
+
+    public boolean isActiveSearch(int id) {
+        return activeSearchDetails.keySet().contains(id);
     }
 }
