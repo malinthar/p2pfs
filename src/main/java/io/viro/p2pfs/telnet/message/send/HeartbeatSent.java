@@ -18,7 +18,9 @@ public class HeartbeatSent extends Message {
     @Override
     public String getMessage() {
         StringBuilder message = new StringBuilder(Constant.CHECK_NODE);
-        message.append(Constant.SEPARATOR).append(sender.getHost()).append(Constant.SEPARATOR)
+        message.append(Constant.SEPARATOR)
+                .append(sender.getHost())
+                .append(Constant.SEPARATOR)
                 .append(sender.getPort());
         return message.toString();
     }

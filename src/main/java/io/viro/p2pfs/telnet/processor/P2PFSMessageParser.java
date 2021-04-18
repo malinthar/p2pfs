@@ -84,10 +84,17 @@ public class P2PFSMessageParser {
                 return searchRequestReceived;
             }
             if (command.equals(Constant.CHECK_NODE)) {
-                return new HeartbeatRequestReceived();
+                String ip = tokenizer.nextToken();
+                int port = Integer.parseInt(tokenizer.nextToken());
+                NodeCredentials sender = new NodeCredentials(ip, port, null);
+                return new HeartbeatRequestReceived(sender);
             }
             if (command.equals(Constant.NODEOK)) {
-                return new HeartbeatResponse();
+                int code = Integer.parseInt(tokenizer.nextToken());
+                String ip = tokenizer.nextToken();
+                int port = Integer.parseInt(tokenizer.nextToken());
+                NodeCredentials sender = new NodeCredentials(ip, port, null);
+                return new HeartbeatResponse(sender, code);
             }
             if (command.equals(Constant.LEAVE)) {
                 String ip = tokenizer.nextToken();
