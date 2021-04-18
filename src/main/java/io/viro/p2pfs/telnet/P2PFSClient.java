@@ -10,9 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,6 +25,7 @@ public class P2PFSClient implements Runnable {
     private DatagramSocket socket;
     private Node node;
     private long lastHeartbeatTime;
+    private ArrayList<NodeCredentials> heartbeatList;
     NodeCredentials bootstrapServer;
     P2PFSMessageProcessor processor;
     Boolean isRegistered = false;
@@ -55,12 +58,15 @@ public class P2PFSClient implements Runnable {
                 //HeartBeatings
                 if(System.currentTimeMillis()-lastHeartbeatTime>60*1000){
                     for (NodeCredentials nodeCredentials:this.node.getNeighbors()){
-                        nodeAlive(new HeartbeatSent(this.node.getCredentials(),nodeCredentials));
+                        if (!heartbeatList.contains(nodeCredentials)){
+                            nodeAlive(new HeartbeatSent(this.node.getCredentials(),nodeCredentials));
+                        }else {
+                            //ungracefully departure
+                            this.node.getNeighbors().remove(nodeCredentials);
+                        }
                     }
                     lastHeartbeatTime=System.currentTimeMillis();
                 }
-
-
             }
         } catch (IOException e) {
             logger.error(e.getMessage());
