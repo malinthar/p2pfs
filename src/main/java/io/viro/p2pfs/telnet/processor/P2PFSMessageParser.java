@@ -12,6 +12,7 @@ import io.viro.p2pfs.telnet.message.receive.ReceivedMessage;
 import io.viro.p2pfs.telnet.message.receive.RegisterResponse;
 import io.viro.p2pfs.telnet.message.receive.SearchRequestReceived;
 import io.viro.p2pfs.telnet.message.receive.SearchResponseReceived;
+import io.viro.p2pfs.telnet.message.receive.UnRegisterResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,10 @@ public class P2PFSMessageParser {
                     ReceivedMessage response = new RegisterResponse(neighboringNodes);
                     return response;
                 }
+            }
+            if (command.equals(Constant.UNREGOK)) {
+                int code = Integer.parseInt(tokenizer.nextToken());
+                return new UnRegisterResponse(code);
             }
             if (command.equals(Constant.JOINOK)) {
                 String ip = tokenizer.nextToken();
