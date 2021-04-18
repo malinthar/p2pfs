@@ -21,9 +21,9 @@ public class BootstrapNode {
     public static void main(String[] args) {
         BasicConfigurator.configure();
         if (args.length == 5) {
-            logger.info("_________Arguments_________");
+            Util.print("_________Arguments_________");
             for (String arg : args) {
-                logger.info(arg);
+                Util.print(arg);
             }
             //Node parameters.
             String nodeIp = args[0];
@@ -38,9 +38,9 @@ public class BootstrapNode {
 
             //Create a new node
             List<String> filesList = Constant.getFilesRand();
-            logger.info("_________Files list of the node_________");
+            Util.print("_________Files list of the node_________");
             for (String file : filesList) {
-                logger.info(file);
+                Util.print(file);
             }
             Node node = new Node(credentials, filesList);
 

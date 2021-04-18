@@ -147,7 +147,7 @@
                                 https://raw.githubusercontent.com/wso2/code-quality-tools/master/checkstyle/checkstyle.xml
                             </configLocation>
                             <suppressionsLocation>
-                                https://raw.githubusercontent.com/wso2/code-quality-tools/master/checkstyle/suppressions.xml
+                                checkstyle-suppresions.xml
                             </suppressionsLocation>
                             <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>

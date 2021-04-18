@@ -1,6 +1,7 @@
 package io.viro.p2pfs.telnet.processor;
 
 import io.viro.p2pfs.Constant;
+import io.viro.p2pfs.Util;
 import io.viro.p2pfs.telnet.P2PFSClient;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
@@ -67,10 +68,10 @@ public class P2PFSMessageProcessor {
                 client.setIsRegistered(true);
                 List<NodeCredentials> nodesList = ((RegisterResponse) response).getNeighboringNodes();
                 if (nodesList.size() == 0) {
-                    logger.info("Registered successfully, BS server responded with 0 nodes!");
+                    Util.print("Registered successfully, BS server responded with 0 nodes!");
                 } else {
                     //select two random nodes from the returned nodes and put join requests to them.
-                    logger.info("Registered successfully, BS server responded with " + nodesList.size() + " nodes!");
+                    Util.print("Registered successfully, BS server responded with " + nodesList.size() + " nodes!");
                     for (int i = 0; i < 2; i++) {
                         if (nodesList.size() == 0) {
                             break;
@@ -78,7 +79,7 @@ public class P2PFSMessageProcessor {
                             int randomNumber = random.nextInt(nodesList.size());
                             NodeCredentials neighbor = nodesList.get(randomNumber);
                             nodesList.remove(randomNumber);
-                            logger.info("Sent join request to " + neighbor.getHost());
+                            Util.print("Sent join request to " + neighbor.getHost());
                             client.join(new JoinRequestSent(client.getNode().getCredentials(), neighbor));
                         }
                     }
@@ -88,17 +89,17 @@ public class P2PFSMessageProcessor {
         } else if (response instanceof JoinResponseReceived) {
             if (((JoinResponseReceived) response).getCode() == Constant.JOIN_SUCCESS) {
                 this.client.getNode().addNeighbor(((JoinResponseReceived) response).getSender());
-                logger.info("Node " + ((JoinResponseReceived) response).getSender().getHost() +
+                Util.print("Node " + ((JoinResponseReceived) response).getSender().getHost() +
                         " is added to routing table");
             } else {
                 //todo: JoinResponse is an error what to do?
-                logger.info("Error in joining with node ", sender.getHost());
+                Util.print("Error in joining with node" + sender.getHost());
             }
         } else if (response instanceof JoinRequestReceived) {
-            logger.info("Join request received from " + ((JoinRequestReceived) response).getSender().getHost());
+            Util.print("Join request received from " + ((JoinRequestReceived) response).getSender().getHost());
             if (this.client.getNode().getNeighborCount() < 6) {
                 this.client.getNode().addNeighbor(((JoinRequestReceived) response).getSender());
-                logger.info("Node " + ((JoinRequestReceived) response).getSender().getHost() +
+                Util.print("Node " + ((JoinRequestReceived) response).getSender().getHost() +
                         " is added to routing table");
                 this.client.joinOK(new JoinResponseSent(this.client.getNode().getCredentials(),
                         ((JoinRequestReceived) response).getSender(), Constant.JOIN_SUCCESS));
@@ -106,22 +107,22 @@ public class P2PFSMessageProcessor {
             } else {
                 //todo:What to do in this case. Here send the error code
                 this.client.getNode().addSecondaryNeighbor(sender);
-                logger.info("Routing table is full, sent error code");
+                Util.print("Routing table is full, sent error code");
                 this.client.joinOK(new JoinResponseSent(this.client.getNode().getCredentials(),
                         sender, Constant.JOIN_ERROR));
 
             }
         } else if (response instanceof SearchRequestReceived) {
-            logger.info("Search request received from " + sender.getHost());
+            Util.print("Search request received from " + sender.getHost());
             SearchRequestReceived searchRequestReceived = (SearchRequestReceived) response;
             SearchRequestDTO searchRequestDTO = new SearchRequestDTO(searchRequestReceived);
             this.client.triggerSearch(searchRequestDTO);
 
         } else if (response instanceof SearchResponseReceived) {
-            logger.info("Search response received from " + sender.getHost());
+            Util.print("Search response received from " + sender.getHost());
             SearchResponseReceived searchResultResponse = (SearchResponseReceived) response;
             if (searchResultResponse.getResults().size() != 0) {
-                logger.info("Hit! the files have been found at " +
+                Util.print("Hit! the files have been found at " +
                         sender.getHost() + " files are :" + searchResultResponse.getResults().toString());
                 this.client.getNode()
                         .addToCache(searchResultResponse.getCredential(), searchResultResponse.getKeyword());
@@ -129,19 +130,22 @@ public class P2PFSMessageProcessor {
 
             //todo: Complete
         } else if (response instanceof HeartbeatRequestReceived) {
-            logger.info("Heartbeat request received from ", sender.getHost());
+            Util.print("Heartbeat request received from " + sender.getHost());
             this.client.nodeOK(
                     new HeartbeatResponseSent(this.client.getNode().getCredentials(), sender, Constant.NODE_ALIVE));
         } else if (response instanceof HeartbeatResponse) {
-            logger.info("Heartbeat Response received from ", sender.getHost());
+            Util.print("Heartbeat Response received from " + sender.getHost());
             this.client.removeNodeFromHeartBeatList(sender);
         } else if (response instanceof LeaveGracefullyRequestReceived) {
+            Util.print("Leave Gracefully request received from " + sender.getHost());
+            List<NodeCredentials> neighbours = this.client.getNode().getRoutingTable();
+            neighbours.remove(sender);
             logger.info("Leave Gracefully request received from ", sender.getHost());
             this.client.getNode().removeNeighbour(sender);
             this.client.leaveOK(new LeaveGracefullyResponseSent(
                     this.client.getNode().getCredentials(), sender, Constant.LEAVE_SUCCESS));
         } else if (response instanceof LeaveGracefullyResponse) {
-            logger.info("Leave Gracefully response received from ", sender.getHost());
+            Util.print("Leave Gracefully response received from " + sender.getHost());
             if (((LeaveGracefullyResponse) response).getCode() == Constant.LEAVE_SUCCESS) {
                 //todo: what have to do when leave
             }
