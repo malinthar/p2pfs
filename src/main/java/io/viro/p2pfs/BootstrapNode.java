@@ -47,13 +47,14 @@ public class BootstrapNode {
             //create a new client for distributed system communication
             P2PFSClient client = new P2PFSClient(node, bootstrapServer);
             client.registerNode();
-
             new P2PFSCommander(client);
 
             //List of search queries in random order.
             List<String> searchQueries =
                     Arrays.asList("Twilight", "Jack", "American_Idol", "Happy_Feet", "Twilight_saga", "Happy_Feet",
                             "Feet");
+            //todo:search query generation
+
             Collections.shuffle(searchQueries);
             while (true) {
                 try {
@@ -61,14 +62,13 @@ public class BootstrapNode {
                 } catch (InterruptedException e) {
                     logger.error(e.getMessage());
                 }
-
                 if (!client.getIsRegistered()) {
                     continue;
                 }
                 //search function here
                 for (int i = 0; i < searchQueries.size(); i++) {
-                    //String query = searchQueries.get(i);
-                   // client.initNewSearch(query);
+                    String query = searchQueries.get(i);
+                    client.initNewSearch(query);
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException e) {

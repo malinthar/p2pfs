@@ -32,10 +32,11 @@ public class P2PFSCommander implements Runnable {
             String command = scanner.nextLine();
             if (command.equals("exit")) {
                 for (NodeCredentials nodeCredentials : client.getNode().getRoutingTable()) {
-                    this.client.leave(new LeaveRequestSent(this.client.getNode().getCredentials(), nodeCredentials));
+                    this.client.leave(new LeaveRequestSent(this.client.getNode().getCredentials(),
+                            nodeCredentials));
                 }
             }
-            logger.info("Node " + this.client.getNode().getCredentials().getHost() + "is gracefully departure...");
+            logger.info("Node " + this.client.getNode().getCredentials().getHost() + "has gracefully left!");
         }
     }
 

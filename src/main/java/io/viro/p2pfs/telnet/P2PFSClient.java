@@ -4,7 +4,6 @@ import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.Node;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
-
 import io.viro.p2pfs.telnet.message.send.HeartbeatResponseSent;
 import io.viro.p2pfs.telnet.message.send.HeartbeatSent;
 import io.viro.p2pfs.telnet.message.send.JoinRequestSent;
@@ -131,7 +130,7 @@ public class P2PFSClient implements Runnable {
         List<String> searchResults = node.searchLocally(searchRequestDto.getKeyword());
         //pass to neighbors
         if (searchResults.isEmpty()) {
-            logger.info("File does not exist in locally");
+            logger.info("File does not exist locally");
             List<NodeCredentials> nextNodes = node.searchCache(searchRequestDto.getKeyword());
             if (nextNodes.isEmpty()) {
                 nextNodes = node.getRoutingTable();
@@ -140,7 +139,7 @@ public class P2PFSClient implements Runnable {
                 if (!neighbor.getHost().equals(searchRequestDto.getRequestNodeCredentials().getHost()) &&
                         neighbor.getPort() != searchRequestDto.getRequestNodeCredentials().getPort() &&
                         searchRequestDto.getHopCount() < Constant.MAX_HOP_COUNT) {
-                    logger.info("Forward SEARCH to neighbor" + " : " + neighbor.getHost());
+                    logger.info("Forward the search request to neighbor" + " : " + neighbor.getHost());
                     SearchRequest searchRequest = new SearchRequest(searchRequestDto, neighbor);
                     searchRequest.incrementHopCountByOne();
                     search(searchRequest);
@@ -149,10 +148,15 @@ public class P2PFSClient implements Runnable {
             return;
         } else {
             if (searchRequestDto.getRequestNodeCredentials().equals(this.node.getCredentials())) {
-                logger.info("Hits found locally!");
+                logger.info("Following results were found locally for keywords " + searchRequestDto.getKeyword());
+                searchResults.forEach(result -> {
+                    logger.info(result);
+                });
                 return;
             } else {
-                logger.info("Hits found! send SEARCHOK response to search query originator");
+                logger.info("Hits found for keywords " +
+                        searchRequestDto.getKeyword() +
+                        "! send SEARCHOK response to search query originator");
                 SearchResponseSent response = new SearchResponseSent(searchRequestDto.getId(),
                         searchRequestDto.getKeyword(),
                         searchRequestDto.getRequestNodeCredentials(),
@@ -162,7 +166,6 @@ public class P2PFSClient implements Runnable {
             }
         }
         //file found todo://hits are not exactly matching though, might not get the best results
-
     }
 
     public void initNewSearch(String query) {

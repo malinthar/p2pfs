@@ -99,11 +99,15 @@ public class Node {
     }
 
     public void addToCache(NodeCredentials credentials, String keyword) {
-        if (this.cache.containsKey(credentials)) {
-            this.cache.get(credentials).add(keyword);
-            return;
-        }
-
+        cache.entrySet().forEach(entry -> {
+            if (entry.getKey().getHost().equals(credentials.getHost()) &&
+                    entry.getKey().getPort() == credentials.getPort()) {
+                if (!entry.getValue().contains(keyword)) {
+                    entry.getValue().add(keyword);
+                }
+                return;
+            }
+        });
         ArrayList<String> keywords = new ArrayList<String>();
         keywords.add(keyword);
         this.cache.put(credentials, keywords);
