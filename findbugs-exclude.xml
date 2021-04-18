@@ -4,4 +4,8 @@
         <Class name="io.viro.p2pfs.telnet.P2PFSClient"/>
         <Bug pattern="DM_DEFAULT_ENCODING"/>
     </Match>
+    <Match>
+        <Class name="io.viro.p2pfs.telnet.P2PFSCommander"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
 </FindBugsFilter>

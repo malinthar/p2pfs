@@ -87,8 +87,9 @@ public class P2PFSMessageProcessor {
             }
         } else if (response instanceof JoinResponseReceived) {
             if (((JoinResponseReceived) response).getCode() == Constant.JOIN_SUCCESS) {
-                this.client.getNode().addNeighbor(sender);
-                logger.info("Node " + sender.getHost() + " is added to routing table");
+                this.client.getNode().addNeighbor(((JoinResponseReceived) response).getSender());
+                logger.info("Node " + ((JoinResponseReceived) response).getSender().getHost() +
+                        " is added to routing table");
             } else {
                 //todo: JoinResponse is an error what to do?
                 logger.info("Error in joining with node ", sender.getHost());

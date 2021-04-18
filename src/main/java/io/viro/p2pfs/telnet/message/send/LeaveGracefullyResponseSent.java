@@ -2,6 +2,7 @@ package io.viro.p2pfs.telnet.message.send;
 
 import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
+
 /**
  * Send a Heartbeat response.
  */
@@ -21,5 +22,9 @@ public class LeaveGracefullyResponseSent extends Message {
         StringBuilder message = new StringBuilder(Constant.LEAVEOK);
         message.append(Constant.SEPARATOR).append(this.code);
         return message.toString();
+    }
+
+    public NodeCredentials getSender() {
+        return sender;
     }
 }

@@ -31,10 +31,4 @@ public class NodeCredentials {
         return this.userName;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        NodeCredentials nodeCredentials = (NodeCredentials) obj;
-        return (this.host == nodeCredentials.host & this.port == nodeCredentials.port &
-                this.userName == nodeCredentials.userName);
-    }
 }

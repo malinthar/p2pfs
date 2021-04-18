@@ -20,7 +20,9 @@ public class JoinResponseSent extends Message {
     @Override
     public String getMessage() {
         StringBuilder message = new StringBuilder(Constant.JOINOK);
-        message.append(Constant.SEPARATOR).append(code);
+        message.append(Constant.SEPARATOR).append(sender.getHost()).
+                append(Constant.SEPARATOR).append(sender.getPort()).
+                append(Constant.SEPARATOR).append(code);
         return message.toString();
     }
 
