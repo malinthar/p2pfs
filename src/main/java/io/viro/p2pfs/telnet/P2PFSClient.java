@@ -4,8 +4,13 @@ import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.Node;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
+
+import io.viro.p2pfs.telnet.message.send.HeartbeatResponseSent;
+import io.viro.p2pfs.telnet.message.send.HeartbeatSent;
 import io.viro.p2pfs.telnet.message.send.JoinRequestSent;
 import io.viro.p2pfs.telnet.message.send.JoinResponseSent;
+import io.viro.p2pfs.telnet.message.send.LeaveGracefullyResponseSent;
+import io.viro.p2pfs.telnet.message.send.LeaveRequestSent;
 import io.viro.p2pfs.telnet.message.send.Message;
 import io.viro.p2pfs.telnet.message.send.RegisterRequest;
 import io.viro.p2pfs.telnet.message.send.SearchRequest;
@@ -18,6 +23,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,6 +33,8 @@ import java.util.List;
 public class P2PFSClient implements Runnable {
     private DatagramSocket socket;
     private Node node;
+    private long lastHeartbeatTime;
+    private ArrayList<NodeCredentials> heartbeatList;
     NodeCredentials bootstrapServer;
     P2PFSMessageProcessor processor;
     Boolean isRegistered = false;
@@ -45,6 +53,7 @@ public class P2PFSClient implements Runnable {
             logger.info("New node created at" + node.getCredentials().getPort() + ". Waiting for incoming data...");
             String messege;
             while (true) {
+                //Massage Receiver
                 byte[] buffer = new byte[65536];
                 DatagramPacket incoming = new DatagramPacket(buffer, buffer.length);
                 socket.receive(incoming);
@@ -55,6 +64,19 @@ public class P2PFSClient implements Runnable {
                 this.processor.processMessage(messege,
                         new NodeCredentials(incoming.getAddress().getHostAddress(), incoming.getPort()));
 
+                //HeartBeatings
+                if (System.currentTimeMillis() - lastHeartbeatTime > 60 * 1000) {
+                    for (NodeCredentials nodeCredentials : this.node.getRoutingTable()) {
+                        if (!heartbeatList.contains(nodeCredentials)) {
+                            heartbeatList.add(nodeCredentials);
+                            nodeAlive(new HeartbeatSent(this.node.getCredentials(), nodeCredentials));
+                        } else {
+                            //ungracefully departure
+                            this.node.getRoutingTable().remove(nodeCredentials);
+                        }
+                    }
+                    lastHeartbeatTime = System.currentTimeMillis();
+                }
             }
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -152,5 +174,24 @@ public class P2PFSClient implements Runnable {
         return isRegistered;
     }
 
+    public void nodeAlive(HeartbeatSent message) {
+        sendMessage(message);
+    }
+
+    public void nodeOK(HeartbeatResponseSent message) {
+        sendMessage(message);
+    }
+
+    public void removeNodeFromHeartBeatList(NodeCredentials nodeCredentials) {
+        this.heartbeatList.remove(nodeCredentials);
+    }
+
+    public void leaveOK(LeaveGracefullyResponseSent message) {
+        sendMessage(message);
+    }
+
+    public void leave(LeaveRequestSent message) {
+        sendMessage(message);
+    }
 
 }

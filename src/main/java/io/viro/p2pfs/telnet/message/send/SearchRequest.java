@@ -5,7 +5,7 @@ import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
 
 /**
- * Search Request
+ * Search Request.
  */
 
 public class SearchRequest extends Message {

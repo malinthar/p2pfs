@@ -13,6 +13,8 @@ public class Constant {
     public static final String JOIN = "JOIN";
     public static final String SEPARATOR = " ";
     public static final String SEARCH = "SEARCH";
+    public static final String LEAVE = "LEAVE";
+    public static final String CHECK_NODE = "CHECK_NODE";
 
 
     //Responses
@@ -29,6 +31,12 @@ public class Constant {
     public static final String SEARCHOK = "SEARCHOK";
     private static final List<Integer> REG_ERROR_CODES;
     public static final int SEARCH_ERROR = 9998;
+
+    public static final String NODEOK = "NODEOK";
+    public static final int LEAVE_SUCCESS = 0;
+
+    public static final String LEAVEOK = "LEAVEOK";
+    public static final int NODE_ALIVE = 0;
 
     //Files
     private static final List<String> FILES;
