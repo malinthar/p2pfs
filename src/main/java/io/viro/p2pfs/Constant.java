@@ -90,4 +90,18 @@ public class Constant {
         }
         return randFiles;
     }
+
+    public static List<String> getQueriesRand() {
+        List<String> randQueries = new ArrayList<>();
+        int randNum = random.nextInt(7) + 3;
+        int count = 0;
+        while (count < randNum) {
+            int index = random.nextInt(QUERIES.size());
+            if (!randQueries.contains(QUERIES.get(index))) {
+                randQueries.add(QUERIES.get(index).replace(" ", "_"));
+                count++;
+            }
+        }
+        return randQueries;
+    }
 }
