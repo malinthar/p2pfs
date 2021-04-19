@@ -21,12 +21,12 @@ public class FileDownloader {
     private static final Logger logger = LoggerFactory.getLogger(P2PFSClient.class);
     private static final String GET = "GET";
 
-    public static void getFileFromNetwork(String fileHandle, NodeCredentials remote) {
+    public static void getFileFromNetwork(String fileHandle, NodeCredentials remote, String myIp) {
         try {
             Util.println("Sent request to download file " + fileHandle + " from" + remote.getHost() + ":" +
                     remote.getPort() + "....");
             URL url = new URL("http://" + remote.getHost() + ":" + remote.getPort() + "/download?fileHandle=" +
-                    fileHandle);
+                    fileHandle + "&requestNode=" + myIp);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(GET);
             int code = connection.getResponseCode();

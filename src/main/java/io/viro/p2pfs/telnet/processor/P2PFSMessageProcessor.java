@@ -141,7 +141,8 @@ public class P2PFSMessageProcessor {
                             .addToCache(searchResultResponse.getSender(), searchResultResponse.getKeyword());
                     this.client.getNode().removeFromActiveSearch(searchResultResponse.getSearchId());
                     searchResultResponse.getResults().forEach(file -> {
-                        FileDownloader.getFileFromNetwork(file, searchResultResponse.getSender());
+                        FileDownloader.getFileFromNetwork(file, searchResultResponse.getSender(),
+                                this.client.getNode().getCredentials().getHost());
                     });
 
                 } else {
