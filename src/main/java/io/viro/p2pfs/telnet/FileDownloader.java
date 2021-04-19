@@ -31,18 +31,20 @@ public class FileDownloader {
             if (code == HttpURLConnection.HTTP_OK) {
                 BufferedReader input = new BufferedReader(new
                         InputStreamReader(connection.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-                while ((inputLine = input.readLine()) != null) {
-                    response.append(inputLine);
+
+                String line;
+                StringBuffer buffer = new StringBuffer();
+                while ((line = input.readLine()) != null) {
+                    buffer.append(line);
                 }
                 input.close();
-                MessageDigest digest = null;
-                digest = MessageDigest.getInstance("SHA-256");
-                byte[] hash = digest.digest(response.toString().getBytes(StandardCharsets.UTF_8));
-                BigInteger noHash = new BigInteger(1, hash);
-                String hashStr = noHash.toString(16);
-                Util.print("Received has " + hashStr);
+
+                MessageDigest dg = null;
+                dg = MessageDigest.getInstance("SHA-256");
+                byte[] hash = dg.digest(buffer.toString().getBytes(StandardCharsets.UTF_8));
+                BigInteger hashN = new BigInteger(1, hash);
+                String receivedMsg = hashN.toString(16);
+                Util.print("Received hash " + receivedMsg);
             }
         } catch (Exception e) {
             logger.error(e.getMessage());
