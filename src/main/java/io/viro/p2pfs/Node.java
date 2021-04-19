@@ -162,7 +162,8 @@ public class Node {
     public List<NodeCredentials> getTwoThirdsOfRT() {
         if (this.routingTable.size() > 2) {
             List<NodeCredentials> randomNodes = new ArrayList<>();
-            for (int i = 0; i < 2 * routingTable.size() / 3; i++) {
+            int upperBound = (int) (2.0 * routingTable.size() / 3);
+            for (int i = 0; i < upperBound; i++) {
                 randomNodes.add(routingTable.get(i));
             }
             return randomNodes;
