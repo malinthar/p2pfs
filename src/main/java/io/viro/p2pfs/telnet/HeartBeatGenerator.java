@@ -36,7 +36,7 @@ public class HeartBeatGenerator implements Runnable {
 
         while (this.client.isRegistered) {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(1000 * 60);
             } catch (InterruptedException e) {
                 logger.info(e.getMessage());
             }
