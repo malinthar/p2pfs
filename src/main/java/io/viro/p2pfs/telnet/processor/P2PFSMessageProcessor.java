@@ -125,7 +125,8 @@ public class P2PFSMessageProcessor {
             SearchResponseReceived searchResultResponse = (SearchResponseReceived) response;
             if (searchResultResponse.getResults().size() != 0) {
                 if (this.client.getNode().isActiveSearch(searchResultResponse.getSearchId())) {
-                    Util.println("Hits! for \"" + ((SearchResponseReceived) response).getKeyword() + "\" from " +
+                    Util.println("");
+                    Util.printWUS("Hits! for \"" + ((SearchResponseReceived) response).getKeyword() + "\" from " +
                             ((SearchResponseReceived) response).getSender().getHost() +
                             " : " + ((SearchResponseReceived) response).getSender().getPort());
                     Util.print("Search ID: " + searchResultResponse.getSearchId());

@@ -11,4 +11,9 @@ public class Util {
     public static void println(String message) {
         System.out.println("\n"+message);
     }
+
+    public static void printWUS(String message) {
+        message = message.replace("_"," ");
+        System.out.println("\n"+message);
+    }
 }

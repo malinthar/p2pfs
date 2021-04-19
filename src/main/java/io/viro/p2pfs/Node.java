@@ -83,7 +83,7 @@ public class Node {
                 }
             }
             if (count == words.length) {
-                results.add(file);
+                results.add(file.replace(" ", "_"));
             }
         }
         return results;
