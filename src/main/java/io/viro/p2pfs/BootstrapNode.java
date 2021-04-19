@@ -1,5 +1,6 @@
 package io.viro.p2pfs;
 
+import io.viro.p2pfs.api.DownloadApi;
 import io.viro.p2pfs.telnet.P2PFSClient;
 import io.viro.p2pfs.telnet.P2PFSCommander;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
@@ -54,6 +55,10 @@ public class BootstrapNode {
             P2PFSClient client = new P2PFSClient(node, bootstrapServer);
             client.registerNode();
             new P2PFSCommander(client);
+
+            //create the REST API for file downloads
+            DownloadApi downloadApi = new DownloadApi();
+            downloadApi.startListening(nodeIp, nodePort);
 
             //List of search queries in random order.
             List<String> searchQueries =
