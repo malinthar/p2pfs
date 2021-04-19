@@ -176,6 +176,7 @@ public class P2PFSMessageProcessor {
             switch (res.errorCode) {
                 case Constant.UNREG_SUCCESS:
                     Util.print("Successfully Unregistered in the Bootstrap!");
+                    this.client.setIsRegistered(false);
                     break;
                 case Constant.UNREG_ERROR:
                     Util.print("Error while Unregistering in the Bootstrap!");

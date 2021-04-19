@@ -62,7 +62,7 @@ public class BootstrapNode {
             //todo:search query generation, add _ to spaces.
 
             Collections.shuffle(searchQueries);
-            while (true) {
+            while (client.getIsRegistered()) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
