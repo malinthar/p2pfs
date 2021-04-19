@@ -146,7 +146,7 @@ public class P2PFSClient implements Runnable {
     public void searchInNode(SearchRequestDTO searchRequestDTO) {
         List<String> searchResults = node.searchLocally(searchRequestDTO.getKeyword());
         if (searchResults.isEmpty()) {
-            Util.print("No hits found for \"" + searchRequestDTO.getKeyword() + "\" locally");
+            Util.printWUS("No hits found for \"" + searchRequestDTO.getKeyword() + "\" locally");
             List<NodeCredentials> nextNodes = node.searchCache(searchRequestDTO.getKeyword());
             if (nextNodes.isEmpty()) {
                 nextNodes = node.getRoutingTable();
@@ -202,7 +202,8 @@ public class P2PFSClient implements Runnable {
     public void initNewSearch(String query) {
         SearchRequestDTO searchRequestDTO = node.initNewSearch(query);
         this.node.addToActiveSearch(searchRequestDTO.getId(), searchRequestDTO);
-        Util.println("Searching for \"" + searchRequestDTO.getKeyword() + "\"");
+        Util.println("");
+        Util.printWUS("Searching for \"" + searchRequestDTO.getKeyword() + "\"");
         this.searchInNode(searchRequestDTO);
     }
 

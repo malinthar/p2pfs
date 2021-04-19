@@ -2,6 +2,7 @@ package io.viro.p2pfs.telnet.processor;
 
 import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.Util;
+import io.viro.p2pfs.telnet.FileDownloader;
 import io.viro.p2pfs.telnet.P2PFSClient;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
@@ -125,16 +126,24 @@ public class P2PFSMessageProcessor {
             SearchResponseReceived searchResultResponse = (SearchResponseReceived) response;
             if (searchResultResponse.getResults().size() != 0) {
                 if (this.client.getNode().isActiveSearch(searchResultResponse.getSearchId())) {
-                    Util.println("Hits! for \"" + ((SearchResponseReceived) response).getKeyword() + "\" from " +
+                    Util.println("_______________________________________________________________");
+                    Util.printWUS("Hits! for \"" + ((SearchResponseReceived) response).getKeyword() + "\" from " +
                             ((SearchResponseReceived) response).getSender().getHost() +
                             " : " + ((SearchResponseReceived) response).getSender().getPort());
                     Util.print("Search ID: " + searchResultResponse.getSearchId());
                     Util.print("Number of hops: " + searchResultResponse.getHops());
                     Util.print("Number of results: " + searchResultResponse.getNumResults());
-                    Util.print("Files: " + searchResultResponse.getResults().get(0));
+                    Util.print("Files: ");
+                    searchResultResponse.getResults().forEach(file -> {
+                        Util.printWUS(file);
+                    });
                     this.client.getNode()
                             .addToCache(searchResultResponse.getSender(), searchResultResponse.getKeyword());
                     this.client.getNode().removeFromActiveSearch(searchResultResponse.getSearchId());
+                    searchResultResponse.getResults().forEach(file -> {
+                        FileDownloader.getFileFromNetwork(file, searchResultResponse.getSender());
+                    });
+
                 } else {
                     return;
                 }
