@@ -33,9 +33,10 @@ public class P2PFSCommander implements Runnable {
             }
             Scanner scanner = new Scanner(System.in);
             String command = scanner.nextLine();
-            if (command.equals("exit")) {
+            if (command.equals("-1")) {
                 this.client.leave();
                 logger.info("Node " + this.client.getNode().getCredentials().getHost() + " has gracefully left!");
+                break;
             }
             logger.info("Node " + this.client.getNode().getCredentials().getHost() +
                     " received command line input");

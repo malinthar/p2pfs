@@ -79,6 +79,9 @@ public class P2PFSClient implements Runnable {
 //                    }
 //                    lastHeartbeatTime = System.currentTimeMillis();
 //                }
+                if (!this.getIsRegistered()) {
+                    break;
+                }
             }
         } catch (IOException e) {
             logger.error(e.getMessage());
