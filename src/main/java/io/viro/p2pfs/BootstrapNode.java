@@ -56,7 +56,6 @@ public class BootstrapNode {
             P2PFSClient client = new P2PFSClient(node, bootstrapServer);
             client.registerNode();
             new P2PFSCommander(client);
-            //new P2PFSCommander(client);
             new HeartBeatGenerator(client);
 
             //create the REST API for file downloads
