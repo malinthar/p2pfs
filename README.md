@@ -14,3 +14,9 @@ Step 4: Start up several terminals  from the project's root directory and run th
 `java -jar target/io.viro.p2pfs-1.0-SNAPSHOT.jar` `<NodeIP>` `<NodePort>` `<NodeUsername>` `<BootstrapServerIP>` `<BootstrapServerPort>`
 
 eg: `java -jar target/io.viro.p2pfs-1.0-SNAPSHOT.jar 192.168.1.5 55560 node1 localhost 55555`
+
+### Run with makefile
+
+To run this with 10 node execute make.sh
+
+`./make.sh`
