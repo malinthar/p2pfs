@@ -1,6 +1,7 @@
 package io.viro.p2pfs;
 
 import io.viro.p2pfs.telnet.P2PFSClient;
+import io.viro.p2pfs.telnet.P2PFSCommander;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
@@ -20,10 +21,8 @@ public class BootstrapNode {
     public static void main(String[] args) {
         BasicConfigurator.configure();
         if (args.length == 5) {
-            Util.print("_________Arguments_________");
-            for (String arg : args) {
-                Util.print(arg);
-            }
+            Util.print("______________Provided Arguments_______________");
+
             //Node parameters.
             String nodeIp = args[0];
             int nodePort = Integer.parseInt(args[1]);
@@ -32,27 +31,35 @@ public class BootstrapNode {
             String bootstrapServerIp = args[3];
             int bootstrapServerPort = Integer.parseInt(args[4]);
 
+            Util.print("Node IP: " + nodeIp);
+            Util.print("Node Port: " + nodePort);
+            Util.print("Node Username: " + nodeUserName);
+            Util.print("Bootstrap Server IP: " + bootstrapServerIp);
+            Util.print("Bootstrap Server Port:" + bootstrapServerPort);
+            Util.print("______________________________________________");
+
             NodeCredentials credentials = new NodeCredentials(nodeIp, nodePort, nodeUserName);
             NodeCredentials bootstrapServer = new NodeCredentials(bootstrapServerIp, bootstrapServerPort);
 
             //Create a new node
             List<String> filesList = Constant.getFilesRand();
-            Util.print("_________Files list of the node_________");
+            Util.println("______________Available Files_______________");
             for (String file : filesList) {
                 Util.print(file);
             }
+            Util.print("_____________________________________________");
             Node node = new Node(credentials, filesList);
 
             //create a new client for distributed system communication
             P2PFSClient client = new P2PFSClient(node, bootstrapServer);
             client.registerNode();
-            //new P2PFSCommander(client);
+            new P2PFSCommander(client);
 
             //List of search queries in random order.
             List<String> searchQueries =
                     Arrays.asList("Twilight", "Jack", "American_Idol", "Happy_Feet", "Twilight_saga", "Happy_Feet",
                             "Feet");
-            //todo:search query generation
+            //todo:search query generation, add _ to spaces.
 
             Collections.shuffle(searchQueries);
             while (true) {
@@ -69,16 +76,13 @@ public class BootstrapNode {
                     String query = searchQueries.get(i);
                     client.initNewSearch(query);
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(10000);
                     } catch (InterruptedException e) {
                         logger.info(e.getMessage());
                     }
                 }
                 break;
             }
-            Util.print("My queries are done! I'm leaving");
-            client.leave();
-
         } else {
             logger.error("The number of inputs are incorrect");
         }

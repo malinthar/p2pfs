@@ -5,6 +5,10 @@ package io.viro.p2pfs;
  */
 public class Util {
     public static void print(String message) {
-        System.out.println("\n" + message);
+        System.out.println(message);
+    }
+
+    public static void println(String message) {
+        System.out.println("\n"+message);
     }
 }
