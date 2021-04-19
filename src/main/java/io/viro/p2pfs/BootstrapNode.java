@@ -1,7 +1,7 @@
 package io.viro.p2pfs;
 
-import io.viro.p2pfs.telnet.HeartBeatGenerator;
 import io.viro.p2pfs.downloadapi.DownloadApi;
+import io.viro.p2pfs.telnet.HeartBeatGenerator;
 import io.viro.p2pfs.telnet.P2PFSClient;
 import io.viro.p2pfs.telnet.P2PFSCommander;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
