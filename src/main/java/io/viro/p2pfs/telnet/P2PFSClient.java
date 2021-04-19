@@ -134,9 +134,10 @@ public class P2PFSClient implements Runnable {
         List<String> searchResults = node.searchLocally(searchRequestDTO.getKeyword());
         if (searchResults.isEmpty()) {
             Util.printWUS("No hits found for \"" + searchRequestDTO.getKeyword() + "\" locally");
-            List<NodeCredentials> nextNodes = node.searchCache(searchRequestDTO.getKeyword());
+            List<NodeCredentials> nextNodes =
+                    new ArrayList<>(node.searchCache(searchRequestDTO.getKeyword()));
             if (nextNodes.isEmpty()) {
-                nextNodes = node.getRoutingTable();
+                nextNodes.addAll(this.node.getTwoThirdsOfRT());
             }
             nextNodes.forEach((neighbor) -> {
                 if (!neighbor.getHost().equals(searchRequestDTO.getRequestNodeCredentials().getHost()) &&
