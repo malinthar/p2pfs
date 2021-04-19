@@ -12,11 +12,11 @@ import java.util.Map;
  * Represents a node.
  */
 public class Node {
-    NodeCredentials credentials;
-    List<String> files;
-    List<NodeCredentials> routingTable; //routing table
-    List<NodeCredentials> secondaryNeighbors; //Limit=5,
-    Map<NodeCredentials, List<String>> cache;
+    private NodeCredentials credentials;
+    private List<String> files;
+    private List<NodeCredentials> routingTable; //routing table
+    private List<NodeCredentials> secondaryNeighbors; //Limit=5,
+    private Map<NodeCredentials, List<String>> cache;
 
     // for search
     HashMap<Integer, SearchRequestDTO> activeSearchDetails = new HashMap<Integer, SearchRequestDTO>();
@@ -47,7 +47,7 @@ public class Node {
         return false;
     }
 
-    public void addNeighbor(NodeCredentials neighbor) {
+    public synchronized void addNeighbor(NodeCredentials neighbor) {
         this.routingTable.add(neighbor);
         updateRoutingTable();
     }
@@ -122,7 +122,7 @@ public class Node {
         this.cache.put(credentials, keywords);
     }
 
-    public void removeNeighbour(NodeCredentials sender) {
+    public synchronized void removeNeighbour(NodeCredentials sender) {
         int i = 0;
         int index = -1;
         for (NodeCredentials credentials : routingTable) {

@@ -219,6 +219,10 @@ public class P2PFSClient implements Runnable {
         this.heartbeatList.remove(nodeCredentials);
     }
 
+    public ArrayList<NodeCredentials> getHeartBeatList() {
+        return this.heartbeatList;
+    }
+
     public void leaveOK(LeaveGracefullyResponseSent message) {
         sendMessage(message);
     }
