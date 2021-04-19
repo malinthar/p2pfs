@@ -26,12 +26,19 @@ public class P2PFSCommander implements Runnable {
                 this.client.getNode().getCredentials().getHost() + " Waiting for commands...");
 
         while (true) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                logger.error(e.getMessage());
+            }
             Scanner scanner = new Scanner(System.in);
             String command = scanner.nextLine();
             if (command.equals("exit")) {
                 this.client.leave();
+                logger.info("Node " + this.client.getNode().getCredentials().getHost() + " has gracefully left!");
             }
-            logger.info("Node " + this.client.getNode().getCredentials().getHost() + " has gracefully left!");
+            logger.info("Node " + this.client.getNode().getCredentials().getHost() +
+                    " received command line input");
         }
     }
 
