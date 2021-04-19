@@ -1,9 +1,13 @@
-package io.viro.p2pfs.api;
+package io.viro.p2pfs.downloadapi;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import io.viro.p2pfs.Util;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -14,16 +18,25 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 
+/**
+ * File Downloader API.
+ */
+
 public class DownloadApi implements HttpHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(DownloadApi.class);
+
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         String queryParam = httpExchange.getRequestURI().getQuery();
-        Util.println("parameter :" + queryParam);
+//        Headers requestNode = httpExchange.getRequestHeaders("X-Forwarded-For");
+        String[] param = queryParam.split("fileHandle=");
+        Util.println("parameter : " + param[1]);
         String response = null;
         try {
             response = this.createFile();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         httpExchange.sendResponseHeaders(200, response.length());
         OutputStream outputStream = httpExchange.getResponseBody();
@@ -38,7 +51,7 @@ public class DownloadApi implements HttpHandler {
             server.setExecutor(null); // creates a default executor
             server.start();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 

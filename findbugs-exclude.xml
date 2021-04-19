@@ -9,7 +9,23 @@
         <Bug pattern="DM_DEFAULT_ENCODING"/>
     </Match>
     <Match>
-        <Class name="io.viro.p2pfs.telnet.FileDownloader"/>
+        <Class name="io.viro.p2pfs.downloadapi.FileDownloader"/>
         <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
+    <Match>
+        <Class name="io.viro.p2pfs.downloadapi.DownloadApi"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
+    <Match>
+        <Class name="io.viro.p2pfs.downloadapi.DownloadApi"/>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_EXCEPTION"/>
+    </Match>
+    <Match>
+        <Class name="io.viro.p2pfs.downloadapi.FileDownloader"/>
+        <Bug pattern="OS_OPEN_STREAM_EXCEPTION_PATH"/>
+    </Match>
+    <Match>
+        <Class name="io.viro.p2pfs.downloadapi.FileDownloader"/>
+        <Bug pattern="REC_CATCH_EXCEPTION"/>
     </Match>
 </FindBugsFilter>

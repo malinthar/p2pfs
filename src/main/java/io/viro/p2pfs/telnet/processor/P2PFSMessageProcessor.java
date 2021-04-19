@@ -2,7 +2,7 @@ package io.viro.p2pfs.telnet.processor;
 
 import io.viro.p2pfs.Constant;
 import io.viro.p2pfs.Util;
-import io.viro.p2pfs.telnet.FileDownloader;
+import io.viro.p2pfs.downloadapi.FileDownloader;
 import io.viro.p2pfs.telnet.P2PFSClient;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
