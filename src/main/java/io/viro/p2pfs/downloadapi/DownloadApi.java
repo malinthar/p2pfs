@@ -29,9 +29,10 @@ public class DownloadApi implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         String queryParam = httpExchange.getRequestURI().getQuery();
-//        Headers requestNode = httpExchange.getRequestHeaders("X-Forwarded-For");
         String[] param = queryParam.split("fileHandle=");
-        Util.println("parameter : " + param[1]);
+        String[] params2 = param[1].split("&requestNode=");
+
+        Util.println("Download request from " + params2[1] + ", file : " + params2[0]);
         String response = null;
         try {
             response = this.createFile();
@@ -69,8 +70,8 @@ public class DownloadApi implements HttpHandler {
         BigInteger fileString = new BigInteger(1, hash);
         String hashString = fileString.toString(16);
 
-        Util.println("Hash for the file is :" + hashString);
-        Util.println("Size of the file is :" + mbValue.length);
+        Util.print("Hash for the file is : " + hashString);
+        Util.print("Size of the file is : " + mbValue.length + "KB");
 
         return file;
     }
