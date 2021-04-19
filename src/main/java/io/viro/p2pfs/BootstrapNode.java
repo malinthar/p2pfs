@@ -9,7 +9,6 @@ import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -62,10 +61,15 @@ public class BootstrapNode {
             DownloadApi downloadApi = new DownloadApi();
             downloadApi.startListening(nodeIp, nodePort);
 
-            //List of search queries in random order.
-            List<String> searchQueries =
-                    Arrays.asList("Twilight", "Jack", "American_Idol", "Happy_Feet", "Twilight_saga", "Happy_Feet",
-                            "Feet");
+            //List of random search queries.
+            List<String> searchQueries = Constant.getQueriesRand();
+            Util.println("______________Queries to search_______________");
+            for (String query : searchQueries) {
+                Util.printWUS(query);
+            }
+            Util.print("_____________________________________________");
+
+
             //todo:search query generation, add _ to spaces.
 
             Collections.shuffle(searchQueries);
