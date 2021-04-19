@@ -1,6 +1,7 @@
-package io.viro.p2pfs.telnet;
+package io.viro.p2pfs.downloadapi;
 
 import io.viro.p2pfs.Util;
+import io.viro.p2pfs.telnet.P2PFSClient;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,8 @@ public class FileDownloader {
 
     public static void getFileFromNetwork(String fileHandle, NodeCredentials remote) {
         try {
-            URL url = new URL(remote.getHost() + ":" + remote.getPort() + "?fileHandle=" + fileHandle);
+            URL url = new URL("http://" + remote.getHost() + ":" + remote.getPort() + "/download?fileHandle=" +
+                    fileHandle);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(GET);
             int code = connection.getResponseCode();
