@@ -23,13 +23,15 @@ public class FileDownloader {
 
     public static void getFileFromNetwork(String fileHandle, NodeCredentials remote) {
         try {
+            Util.println("Sent request to download file " + fileHandle + " from" + remote.getHost() + ":" +
+                    remote.getPort() + "....");
             URL url = new URL("http://" + remote.getHost() + ":" + remote.getPort() + "/download?fileHandle=" +
                     fileHandle);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(GET);
             int code = connection.getResponseCode();
             Util.println("Remote node " + remote.getHost() + ":" +
-                    remote.getPort() + "responded for file download with code " + code);
+                    remote.getPort() + " responded for file download with code " + code);
             if (code == HttpURLConnection.HTTP_OK) {
                 BufferedReader input = new BufferedReader(new
                         InputStreamReader(connection.getInputStream()));
