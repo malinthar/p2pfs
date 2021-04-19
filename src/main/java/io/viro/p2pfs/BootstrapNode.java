@@ -83,6 +83,17 @@ public class BootstrapNode {
                 }
                 break;
             }
+
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    logger.error(e.getMessage());
+                }
+                if (!client.getIsRegistered()) {
+                    break;
+                }
+            }
         } else {
             logger.error("The number of inputs are incorrect");
         }
