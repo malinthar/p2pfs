@@ -66,19 +66,6 @@ public class P2PFSClient implements Runnable {
                 this.processor.processMessage(message,
                         new NodeCredentials(incoming.getAddress().getHostAddress(), incoming.getPort()));
 
-                //HeartBeatings
-//                if (System.currentTimeMillis() - lastHeartbeatTime > 60 * 1000) {
-//                    for (NodeCredentials nodeCredentials : this.node.getRoutingTable()) {
-//                        if (!heartbeatList.contains(nodeCredentials)) {
-//                            heartbeatList.add(nodeCredentials);
-//                            nodeAlive(new HeartbeatSent(this.node.getCredentials(), nodeCredentials));
-//                        } else {
-//                            //ungracefully departure
-//                            this.node.removeNeighbour(nodeCredentials);
-//                        }
-//                    }
-//                    lastHeartbeatTime = System.currentTimeMillis();
-//                }
                 if (!this.getIsRegistered()) {
                     break;
                 }
@@ -175,9 +162,10 @@ public class P2PFSClient implements Runnable {
         //todo:replace spaces with underscore.!!! IMPORTANT !!!!!!
         //pass to neighbors
         if (searchResults.isEmpty()) {
-            List<NodeCredentials> nextNodes = node.searchCache(searchRequestDto.getKeyword());
+            List<NodeCredentials> nextNodes =
+                    new ArrayList<>(node.searchCache(searchRequestDto.getKeyword()));
             if (nextNodes.isEmpty()) {
-                nextNodes = node.getRoutingTable();
+                nextNodes.addAll(this.node.getTwoThirdsOfRT());
             }
             nextNodes.forEach((neighbor) -> {
                 if (!neighbor.getHost().equals(searchRequestDto.getRequestNodeCredentials().getHost()) &&
@@ -242,5 +230,4 @@ public class P2PFSClient implements Runnable {
         }
         this.stop();
     }
-
 }

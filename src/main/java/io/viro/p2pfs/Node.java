@@ -158,4 +158,16 @@ public class Node {
     public boolean isActiveSearch(int id) {
         return activeSearchDetails.keySet().contains(id);
     }
+
+    public List<NodeCredentials> getTwoThirdsOfRT() {
+        if (this.routingTable.size() > 2) {
+            List<NodeCredentials> randomNodes = new ArrayList<>();
+            for (int i = 0; i < 2 * routingTable.size() / 3; i++) {
+                randomNodes.add(routingTable.get(i));
+            }
+            return randomNodes;
+        } else {
+            return this.routingTable;
+        }
+    }
 }
