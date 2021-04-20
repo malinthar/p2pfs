@@ -216,12 +216,24 @@ public class P2PFSClient implements Runnable {
         sendMessage(message);
     }
 
-    public void removeNodeFromHeartBeatList(NodeCredentials nodeCredentials) {
-        this.heartbeatList.remove(nodeCredentials);
+    public synchronized void removeNodeFromHeartBeatList(NodeCredentials nodeCredentials) {
+        int i = 0;
+        for (NodeCredentials credentials : heartbeatList) {
+            if (credentials.getHost().equals(nodeCredentials.getHost()) &
+                    credentials.getPort() == nodeCredentials.getPort()) {
+                break;
+            }
+            i++;
+        }
+        heartbeatList.remove(i);
     }
 
-    public ArrayList<NodeCredentials> getHeartBeatList() {
+    public synchronized ArrayList<NodeCredentials> getHeartBeatList() {
         return this.heartbeatList;
+    }
+
+    public synchronized void addHeartbeatNode(NodeCredentials credentials) {
+        this.heartbeatList.add(credentials);
     }
 
     public void leaveOK(LeaveGracefullyResponseSent message) {

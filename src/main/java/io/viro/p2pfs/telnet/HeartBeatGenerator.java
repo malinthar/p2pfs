@@ -14,7 +14,8 @@ import java.util.List;
  */
 public class HeartBeatGenerator implements Runnable {
     private P2PFSClient client;
-    private List<NodeCredentials> removeList;
+    private List<NodeCredentials> removeRoutineList;
+    private List<NodeCredentials> removeCachingList;
 
     private static final Logger logger = LoggerFactory.getLogger(HeartBeatGenerator.class);
 
@@ -28,41 +29,53 @@ public class HeartBeatGenerator implements Runnable {
         logger.info(" Heartbeat Generator started on " +
                 this.client.getNode().getCredentials().getHost() + " Sending Heartbeats...");
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            logger.info(e.getMessage());
-        }
-
         while (this.client.isRegistered) {
             try {
-                Thread.sleep(1000 * 60);
+                Thread.sleep(1000 * 30);
             } catch (InterruptedException e) {
                 logger.info(e.getMessage());
             }
-            //HeartBeatings
+            //HeartBeatings for routine
             for (NodeCredentials nodeCredentials : this.client.getNode().getRoutingTable()) {
-                logger.info("Node " + this.client.getNode().getCredentials().getHost() + " sent heartbeat.");
                 if (!this.client.getHeartBeatList().contains(nodeCredentials)) {
-                    this.client.getHeartBeatList().add(nodeCredentials);
+                    this.client.addHeartbeatNode(nodeCredentials);
                     this.client.nodeAlive(new HeartbeatSent(this.client.getNode().getCredentials(), nodeCredentials));
-                    logger.info("Node " + this.client.getNode().getCredentials().getHost() + " sent heartbeat.");
+                    logger.info("Node " + nodeCredentials.getHost() + " sent heartbeat routine node.");
                 } else {
                     //ungracefully departure
-                    removeList.add(nodeCredentials);
+                    this.removeRoutineList.add(nodeCredentials);
+                    logger.info("Node " + nodeCredentials.getHost() + "has ungracefully left!");
                 }
             }
-            for (NodeCredentials nodeCredentials : this.removeList) {
+            for (NodeCredentials nodeCredentials : this.removeRoutineList) {
                 this.client.getNode().removeNeighbour(nodeCredentials);
             }
+            this.removeRoutineList = new ArrayList<>();
 
-//            logger.info("Node " + this.client.getNode().getCredentials().getHost() + "has gracefully left!");
+            //HeartBeatings for Caching
+            for (NodeCredentials nodeCredentials : this.client.getNode().getCacheTable().keySet()) {
+                if (!this.client.getHeartBeatList().contains(nodeCredentials)) {
+                    this.client.addHeartbeatNode(nodeCredentials);
+                    this.client.nodeAlive(new HeartbeatSent(this.client.getNode().getCredentials(), nodeCredentials));
+                    logger.info("Node " + nodeCredentials.getHost() + " sent heartbeat to cache node.");
+                } else {
+                    //ungracefully departure
+                    this.removeCachingList.add(nodeCredentials);
+                    logger.info("Node " + nodeCredentials.getHost() + "has ungracefully left!");
+                }
+            }
+            for (NodeCredentials nodeCredentials : this.removeCachingList) {
+                this.client.getNode().removeCache(nodeCredentials);
+            }
+            this.removeCachingList = new ArrayList<>();
+
         }
     }
 
     public void init() {
         try {
-            removeList = new ArrayList<>();
+            removeRoutineList = new ArrayList<>();
+            removeCachingList = new ArrayList<>();
             new Thread(this).start();
         } catch (Exception e) {
             logger.error(e.getMessage());
