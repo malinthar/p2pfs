@@ -21,7 +21,7 @@ public class BootstrapNode {
 
     public static void main(String[] args) {
         BasicConfigurator.configure();
-        if (args.length == 5) {
+        if (args.length == 6) {
             Util.print("______________Provided Arguments_______________");
 
             //Node parameters.
@@ -61,6 +61,7 @@ public class BootstrapNode {
             DownloadApi downloadApi = new DownloadApi();
             downloadApi.startListening(nodeIp, nodePort);
 
+            if()
             //List of random search queries.
             List<String> searchQueries = Constant.getQueriesRand();
             Util.println("______________Queries to search_______________");
