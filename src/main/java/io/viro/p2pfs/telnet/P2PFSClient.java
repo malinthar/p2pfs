@@ -148,6 +148,12 @@ public class P2PFSClient implements Runnable {
                     SearchRequest searchRequest = new SearchRequest(searchRequestDTO, neighbor);
                     searchRequest.incrementHopCountByOne();
                     search(searchRequest);
+
+                    this.getNode().incForwardedSearchRequestCount();
+                    Util.println("--------------------------performance_Forwarded_Count--------------------------");
+                    Util.println("Forwarded a search Request, total count is : " +
+                            this.getNode().getForwardedSearchRequestCount());
+                    Util.println("--------------------------------------------------------------------------------");
                 }
             });
         } else {
@@ -175,6 +181,12 @@ public class P2PFSClient implements Runnable {
                     SearchRequest searchRequest = new SearchRequest(searchRequestDto, neighbor);
                     searchRequest.incrementHopCountByOne();
                     search(searchRequest);
+
+                    this.getNode().incForwardedSearchRequestCount();
+                    Util.println("--------------------------performance_Forwarded_Count--------------------------");
+                    Util.println("Forwarded a search Request, total count is : " +
+                            this.getNode().getForwardedSearchRequestCount());
+                    Util.println("--------------------------------------------------------------------------------");
                 }
             });
             return;
@@ -185,6 +197,12 @@ public class P2PFSClient implements Runnable {
                     this.node.getCredentials(),
                     searchRequestDto.getHopCount(), searchResults);
             searchOk(response);
+
+            this.getNode().incAnsweredRequestCount();
+            Util.println("--------------------------performance_Answered_Count--------------------------");
+            Util.println("Answered to a search Request, total count is : " +
+                    this.getNode().getAnsweredRequestCount());
+            Util.println("--------------------------------------------------------------------------------");
         }
     }
 

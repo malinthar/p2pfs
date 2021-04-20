@@ -3,6 +3,8 @@ package io.viro.p2pfs;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.dto.SearchRequestDTO;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +20,13 @@ public class Node {
     private List<NodeCredentials> secondaryNeighbors; //Limit=5,
     private Map<NodeCredentials, List<String>> cache;
 
+    private int receivedSearchRequestCount = 0;
+    private int forwardedSearchRequestCount = 0;
+    private int answeredRequestCount = 0;
+
+    //for performance
+    HashMap<Integer, LocalDateTime> searchInitTimeStamps = new HashMap<Integer, LocalDateTime>();
+
     // for search
     HashMap<Integer, SearchRequestDTO> activeSearchDetails = new HashMap<Integer, SearchRequestDTO>();
     private int nextSearchId = 0;
@@ -28,6 +37,42 @@ public class Node {
         secondaryNeighbors = new ArrayList<>();
         cache = new HashMap<>();
         this.files = files;
+    }
+
+    public int getReceivedSearchRequestCount() {
+        return receivedSearchRequestCount;
+    }
+
+    public void setReceivedSearchRequestCount(int receivedSearchRequestCount) {
+        this.receivedSearchRequestCount = receivedSearchRequestCount;
+    }
+
+    public void incReceivedSearchRequestCount() {
+        this.receivedSearchRequestCount++;
+    }
+
+    public int getForwardedSearchRequestCount() {
+        return forwardedSearchRequestCount;
+    }
+
+    public void setForwardedSearchRequestCount(int forwardedSearchRequestCount) {
+        this.forwardedSearchRequestCount = forwardedSearchRequestCount;
+    }
+
+    public void incForwardedSearchRequestCount() {
+        this.forwardedSearchRequestCount++;
+    }
+
+    public int getAnsweredRequestCount() {
+        return answeredRequestCount;
+    }
+
+    public void setAnsweredRequestCount(int answeredRequestCount) {
+        this.answeredRequestCount = answeredRequestCount;
+    }
+
+    public void incAnsweredRequestCount() {
+        this.answeredRequestCount++;
     }
 
     public boolean isEqual(NodeCredentials thatCredentials) {
@@ -72,6 +117,23 @@ public class Node {
         return this.files;
     }
 
+    public void removeFromTimeStampMap(int searchId) {
+        if (searchInitTimeStamps.containsKey(searchId)) {
+            searchInitTimeStamps.remove(searchId);
+        }
+    }
+
+    public double calculateLatency(int searchId, LocalDateTime receivedTime) {
+        if (!searchInitTimeStamps.containsKey(searchId)) {
+            return 0;
+        }
+
+        LocalDateTime initTime = searchInitTimeStamps.get(searchId);
+        int diffNano = (int) ChronoUnit.NANOS.between(initTime, receivedTime);
+        double diffMillis = (diffNano / 1000000.0);
+        return diffMillis;
+    }
+
     public List<String> searchLocally(String keyword) {
         String[] words = keyword.split("_");
         List<String> results = new ArrayList<>();
@@ -104,6 +166,8 @@ public class Node {
         SearchRequestDTO searchRequestDTO = new SearchRequestDTO(this.nextSearchId, this.credentials, query, 0);
         this.nextSearchId++;
         activeSearchDetails.put(searchRequestDTO.getId(), searchRequestDTO);
+        LocalDateTime now = LocalDateTime.now();
+        searchInitTimeStamps.put(searchRequestDTO.getId(), now);
         return searchRequestDTO;
     }
 
