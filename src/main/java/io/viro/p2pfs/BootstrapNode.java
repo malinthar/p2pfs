@@ -63,7 +63,6 @@ public class BootstrapNode {
             DownloadApi downloadApi = new DownloadApi();
             downloadApi.startListening(nodeIp, nodePort);
 
-            if()
             //List of random search queries.
             List<String> searchQueries = new ArrayList<>();
             if (queryEnabled) {
