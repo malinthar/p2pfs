@@ -64,6 +64,10 @@ public class Node {
         return this.routingTable;
     }
 
+    public Map<NodeCredentials, List<String>> getCacheTable() {
+        return this.cache;
+    }
+
     public NodeCredentials getCredentials() {
         return credentials;
     }
@@ -137,6 +141,18 @@ public class Node {
             routingTable.remove(index);
         }
         updateRoutingTable();
+    }
+
+    public synchronized void removeCache(NodeCredentials sender) {
+        NodeCredentials index = null;
+        for (NodeCredentials credentials : cache.keySet()) {
+            if (sender.getHost().equals(credentials.getHost()) &&
+                    sender.getPort() == credentials.getPort()) {
+                index = credentials;
+                break;
+            }
+        }
+        cache.remove(index);
     }
 
     public void updateRoutingTable() {
