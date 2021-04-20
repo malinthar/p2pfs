@@ -9,6 +9,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class BootstrapNode {
             //BootstrapServer parameters
             String bootstrapServerIp = args[3];
             int bootstrapServerPort = Integer.parseInt(args[4]);
+            boolean queryEnabled = Boolean.parseBoolean(args[5]);
 
             Util.print("Node IP: " + nodeIp);
             Util.print("Node Port: " + nodePort);
@@ -63,17 +65,18 @@ public class BootstrapNode {
 
             if()
             //List of random search queries.
-            List<String> searchQueries = Constant.getQueriesRand();
-            Util.println("______________Queries to search_______________");
-            for (String query : searchQueries) {
-                Util.printWUS(query);
+            List<String> searchQueries = new ArrayList<>();
+            if (queryEnabled) {
+                searchQueries.addAll(Constant.getQueriesRand());
+                Util.println("______________Queries to search_______________");
+                for (String query : searchQueries) {
+                    Util.printWUS(query);
+                }
+                Util.print("_____________________________________________");
+                Collections.shuffle(searchQueries);
             }
-            Util.print("_____________________________________________");
-
 
             //todo:search query generation, add _ to spaces.
-
-            Collections.shuffle(searchQueries);
             while (client.getIsRegistered()) {
                 try {
                     Thread.sleep(1000);
