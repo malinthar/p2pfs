@@ -1,5 +1,6 @@
 package io.viro.p2pfs.telnet;
 
+import io.viro.p2pfs.BootstrapNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,10 @@ public class P2PFSCommander implements Runnable {
                 this.client.leave();
                 logger.info("Node " + this.client.getNode().getCredentials().getHost() + " has gracefully left!");
                 break;
+            }
+            if (command.equals("research")) {
+                BootstrapNode.triggerSearchQueries(this.client, BootstrapNode.searchQueries);
+                logger.info("Node " + this.client.getNode().getCredentials().getHost() + " search re initialized!");
             }
             logger.info("Node " + this.client.getNode().getCredentials().getHost() +
                     " received command line input");

@@ -19,6 +19,7 @@ import java.util.List;
  */
 public class BootstrapNode {
     private static final Logger logger = LoggerFactory.getLogger(BootstrapNode.class);
+    public static List<String> searchQueries;
 
     public static void main(String[] args) {
         BasicConfigurator.configure();
@@ -71,6 +72,7 @@ public class BootstrapNode {
                 for (String query : searchQueries) {
                     Util.printWUS(query);
                 }
+                BootstrapNode.searchQueries = searchQueries;
                 Util.print("_____________________________________________");
                 Collections.shuffle(searchQueries);
             }
@@ -86,15 +88,7 @@ public class BootstrapNode {
                     continue;
                 }
                 //search function here
-                for (int i = 0; i < searchQueries.size(); i++) {
-                    String query = searchQueries.get(i);
-                    client.initNewSearch(query);
-                    try {
-                        Thread.sleep(10000);
-                    } catch (InterruptedException e) {
-                        logger.info(e.getMessage());
-                    }
-                }
+                BootstrapNode.triggerSearchQueries(client, searchQueries);
                 break;
             }
 
@@ -110,6 +104,18 @@ public class BootstrapNode {
             }
         } else {
             logger.error("The number of inputs are incorrect");
+        }
+    }
+
+    public static void triggerSearchQueries(P2PFSClient client, List<String> searchQueries) {
+        for (int i = 0; i < searchQueries.size(); i++) {
+            String query = searchQueries.get(i);
+            client.initNewSearch(query);
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                logger.info(e.getMessage());
+            }
         }
     }
 }
