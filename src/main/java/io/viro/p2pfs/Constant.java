@@ -79,7 +79,8 @@ public class Constant {
 
     public static List<String> getFilesRand() {
         List<String> randFiles = new ArrayList<>();
-        int randNum = random.nextInt(3) + 3;
+//        int randNum = random.nextInt(3) + 5;
+        int randNum = 7;
         int count = 0;
         while (count < randNum) {
             int index = random.nextInt(FILES.size());
@@ -93,7 +94,7 @@ public class Constant {
 
     public static List<String> getQueriesRand() {
         List<String> randQueries = new ArrayList<>();
-        int randNum = random.nextInt(7) + 3;
+        int randNum = 7;
         int count = 0;
         while (count < randNum) {
             int index = random.nextInt(QUERIES.size());

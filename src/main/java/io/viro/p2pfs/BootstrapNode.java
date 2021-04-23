@@ -1,7 +1,6 @@
 package io.viro.p2pfs;
 
 import io.viro.p2pfs.downloadapi.DownloadApi;
-import io.viro.p2pfs.telnet.HeartBeatGenerator;
 import io.viro.p2pfs.telnet.P2PFSClient;
 import io.viro.p2pfs.telnet.P2PFSCommander;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
@@ -10,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -58,7 +56,7 @@ public class BootstrapNode {
             P2PFSClient client = new P2PFSClient(node, bootstrapServer);
             client.registerNode();
             new P2PFSCommander(client);
-            new HeartBeatGenerator(client);
+//            new HeartBeatGenerator(client);
 
             //create the REST API for file downloads
             DownloadApi downloadApi = new DownloadApi();
@@ -74,7 +72,7 @@ public class BootstrapNode {
                 }
                 BootstrapNode.searchQueries = searchQueries;
                 Util.print("_____________________________________________");
-                Collections.shuffle(searchQueries);
+//                Collections.shuffle(searchQueries);
             }
 
             //todo:search query generation, add _ to spaces.
