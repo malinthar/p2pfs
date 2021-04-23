@@ -180,7 +180,7 @@ public class P2PFSMessageProcessor {
                     Constant.NODE_ALIVE));
         } else if (response instanceof HeartbeatResponse) {
             HeartbeatResponse res = (HeartbeatResponse) response;
-            //logger.debug("Heartbeat Response received from " + res.getSender().getHost());
+            logger.info("Heartbeat Response received from " + res.getSender().getHost());
             if (res.getCode() == Constant.NODE_ALIVE) {
                 this.client.removeNodeFromHeartBeatList(res.getSender());
             }
