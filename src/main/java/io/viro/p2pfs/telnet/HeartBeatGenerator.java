@@ -40,7 +40,7 @@ public class HeartBeatGenerator implements Runnable {
                 if (!this.client.getHeartBeatList().contains(nodeCredentials)) {
                     this.client.addHeartbeatNode(nodeCredentials);
                     this.client.nodeAlive(new HeartbeatSent(this.client.getNode().getCredentials(), nodeCredentials));
-                    logger.info("Node " + nodeCredentials.getHost() + " sent heartbeat routine node.");
+                    //logger.info("Node " + nodeCredentials.getHost() + " sent heartbeat routing node.");
                 } else {
                     //ungracefully departure
                     this.removeRoutineList.add(nodeCredentials);
@@ -57,7 +57,7 @@ public class HeartBeatGenerator implements Runnable {
                 if (!this.client.getHeartBeatList().contains(nodeCredentials)) {
                     this.client.addHeartbeatNode(nodeCredentials);
                     this.client.nodeAlive(new HeartbeatSent(this.client.getNode().getCredentials(), nodeCredentials));
-                    logger.info("Node " + nodeCredentials.getHost() + " sent heartbeat to cache node.");
+                    //logger.info("Node " + nodeCredentials.getHost() + " sent heartbeat to cache node.");
                 } else {
                     //ungracefully departure
                     this.removeCachingList.add(nodeCredentials);
@@ -68,7 +68,6 @@ public class HeartBeatGenerator implements Runnable {
                 this.client.getNode().removeCache(nodeCredentials);
             }
             this.removeCachingList = new ArrayList<>();
-
         }
     }
 
@@ -81,6 +80,4 @@ public class HeartBeatGenerator implements Runnable {
             logger.error(e.getMessage());
         }
     }
-
-
 }
