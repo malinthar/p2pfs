@@ -1,6 +1,5 @@
 package io.viro.p2pfs.telnet;
 
-import io.viro.p2pfs.Util;
 import io.viro.p2pfs.telnet.credentials.NodeCredentials;
 import io.viro.p2pfs.telnet.message.send.HeartbeatSent;
 import org.slf4j.Logger;
@@ -17,8 +16,6 @@ public class HeartBeatGenerator implements Runnable {
     private P2PFSClient client;
     private List<NodeCredentials> removeRoutineList;
     private List<NodeCredentials> removeCachingList;
-    private List<NodeCredentials> removeList;
-    int heartBeatCount = 0;
 
     private static final Logger logger = LoggerFactory.getLogger(HeartBeatGenerator.class);
 
@@ -40,13 +37,6 @@ public class HeartBeatGenerator implements Runnable {
             }
             //HeartBeatings for routine
             for (NodeCredentials nodeCredentials : this.client.getNode().getRoutingTable()) {
-                logger.info("Node " + this.client.getNode().getCredentials().getHost() + " sent heartbeat.");
-                heartBeatCount++;
-
-                Util.println("--------------------------performance_Sent_HeartBeats--------------------------");
-                Util.println("Sent a HeartBeat, total count is : " + heartBeatCount);
-                Util.println("-------------------------------------------------------------------------------");
-
                 if (!this.client.getHeartBeatList().contains(nodeCredentials)) {
                     this.client.addHeartbeatNode(nodeCredentials);
                     this.client.nodeAlive(new HeartbeatSent(this.client.getNode().getCredentials(), nodeCredentials));

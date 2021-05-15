@@ -36,7 +36,7 @@ public class P2PFSClient implements Runnable {
     private DatagramSocket socket;
     private Node node;
     private long lastHeartbeatTime;
-    private ArrayList<NodeCredentials> heartbeatList;
+    private ArrayList<NodeCredentials> heartbeatList = new ArrayList<>();
     NodeCredentials bootstrapServer;
     P2PFSMessageProcessor processor;
     Boolean isRegistered = false;
@@ -237,13 +237,15 @@ public class P2PFSClient implements Runnable {
     public synchronized void removeNodeFromHeartBeatList(NodeCredentials nodeCredentials) {
         int i = 0;
         for (NodeCredentials credentials : heartbeatList) {
-            if (credentials.getHost().equals(nodeCredentials.getHost()) &
-                    credentials.getPort() == nodeCredentials.getPort()) {
+            if (credentials.getHost().equals(nodeCredentials.getHost())
+                    && credentials.getPort() == nodeCredentials.getPort()) {
                 break;
             }
             i++;
         }
-        heartbeatList.remove(i);
+        if (heartbeatList.size() - 1 >= i) {
+            heartbeatList.remove(i);
+        }
     }
 
     public synchronized ArrayList<NodeCredentials> getHeartBeatList() {
