@@ -100,7 +100,7 @@ public class P2PFSMessageProcessor {
             }
         } else if (response instanceof JoinRequestReceived) {
             //logger.debug("Join request received from " + ((JoinRequestReceived) response).getSender().getHost());
-            if (this.client.getNode().getNeighborCount() < 6) {
+            if (this.client.getNode().getNeighborCount() < 5) {
                 this.client.getNode().addNeighbor(((JoinRequestReceived) response).getSender());
                 //logger.debug("Node " + ((JoinRequestReceived) response).getSender().getHost() +
                 // " is added to routing table");

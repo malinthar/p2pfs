@@ -15,7 +15,7 @@ public class Node {
     private NodeCredentials credentials;
     private List<String> files;
     private List<NodeCredentials> routingTable; //routing table
-    private List<NodeCredentials> secondaryNeighbors; //Limit=5,
+    private List<NodeCredentials> secondaryNeighbors; //Limit=3,
     private Map<NodeCredentials, List<String>> cache;
 
     // for search
