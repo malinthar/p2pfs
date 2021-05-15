@@ -21,11 +21,14 @@ import io.viro.p2pfs.telnet.message.send.HeartbeatResponseSent;
 import io.viro.p2pfs.telnet.message.send.JoinRequestSent;
 import io.viro.p2pfs.telnet.message.send.JoinResponseSent;
 import io.viro.p2pfs.telnet.message.send.LeaveGracefullyResponseSent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
+
 
 /**
  * Process messages.
@@ -117,15 +120,30 @@ public class P2PFSMessageProcessor {
             }
         } else if (response instanceof SearchRequestReceived) {
             //logger.debug("Search request received from " + sender.getHost());
+
             SearchRequestReceived searchRequestReceived = (SearchRequestReceived) response;
             SearchRequestDTO searchRequestDTO = new SearchRequestDTO(searchRequestReceived);
             this.client.triggerSearch(searchRequestDTO);
+
+            this.client.getNode().incReceivedSearchRequestCount();
+            Util.println("--------------------------performance_Received_Count--------------------------");
+            Util.println("Received a search Request, total count is : " +
+                    this.client.getNode().getReceivedSearchRequestCount());
+            Util.println("-------------------------------------------------------------------------------");
 
         } else if (response instanceof SearchResponseReceived) {
             //logger.debug("Search response received from " + sender.getHost());
             SearchResponseReceived searchResultResponse = (SearchResponseReceived) response;
             if (searchResultResponse.getResults().size() != 0) {
                 if (this.client.getNode().isActiveSearch(searchResultResponse.getSearchId())) {
+
+                    this.client.getNode().removeFromActiveSearch(searchResultResponse.getSearchId());
+
+                    LocalDateTime now = LocalDateTime.now();
+                    double latencyInMillis =
+                            this.client.getNode().calculateLatency(searchResultResponse.getSearchId(), now);
+                    this.client.getNode().removeFromTimeStampMap(searchResultResponse.getSearchId());
+
                     Util.println("_______________________________________________________________");
                     Util.printWUS("Hits! for \"" + ((SearchResponseReceived) response).getKeyword() + "\" from " +
                             ((SearchResponseReceived) response).getSender().getHost() +
@@ -134,6 +152,7 @@ public class P2PFSMessageProcessor {
                     Util.print("Number of hops: " + searchResultResponse.getHops());
                     Util.print("Number of results: " + searchResultResponse.getNumResults());
                     Util.print("Files: ");
+                    Util.print("Latency (milli seconds) : " + latencyInMillis);
                     searchResultResponse.getResults().forEach(file -> {
                         Util.printWUS(file);
                     });
