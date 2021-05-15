@@ -39,6 +39,7 @@ public class P2PFSMessageProcessor {
     private P2PFSClient client;
     private static final Logger logger = LoggerFactory.getLogger(P2PFSMessageProcessor.class);
     private Random random;
+    private int receivedHeartBeatCount = 0;
 
     public P2PFSMessageProcessor(P2PFSClient client) {
         this.parser = new P2PFSMessageParser();
@@ -92,7 +93,8 @@ public class P2PFSMessageProcessor {
                 }
             }
         } else if (response instanceof JoinResponseReceived) {
-            if (((JoinResponseReceived) response).getCode() == Constant.JOIN_SUCCESS) {
+            if (((JoinResponseReceived) response).getCode() == Constant.JOIN_SUCCESS &&
+                    this.client.getNode().getNeighborCount() < 3) {
                 this.client.getNode().addNeighbor(((JoinResponseReceived) response).getSender());
                 //logger.debug("Node " +
                 // ((JoinResponseReceived) response).getSender().getHost() +
@@ -103,7 +105,7 @@ public class P2PFSMessageProcessor {
             }
         } else if (response instanceof JoinRequestReceived) {
             //logger.debug("Join request received from " + ((JoinRequestReceived) response).getSender().getHost());
-            if (this.client.getNode().getNeighborCount() < 4) {
+            if (this.client.getNode().getNeighborCount() < 3) {
                 this.client.getNode().addNeighbor(((JoinRequestReceived) response).getSender());
                 //logger.debug("Node " + ((JoinRequestReceived) response).getSender().getHost() +
                 // " is added to routing table");
@@ -174,6 +176,10 @@ public class P2PFSMessageProcessor {
         } else if (response instanceof HeartbeatRequestReceived) {
             HeartbeatRequestReceived res = (HeartbeatRequestReceived) response;
             //logger.debug("Heartbeat request received from " + res.getSender().getHost());
+            receivedHeartBeatCount++;
+            Util.println("--------------------------performance_Recived_HeartBeats--------------------------");
+            Util.println("Sent a HeartBeat, total count is : " + receivedHeartBeatCount);
+            Util.println("-------------------------------------------------------------------------------");
             this.client.nodeOK(new HeartbeatResponseSent(
                     this.client.getNode().getCredentials(),
                     res.getSender(),
