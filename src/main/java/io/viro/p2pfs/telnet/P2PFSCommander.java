@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 
 /**
- * Commander thead.
+ * Commander Thread.
  */
 public class P2PFSCommander implements Runnable {
     private P2PFSClient client;
@@ -55,6 +55,4 @@ public class P2PFSCommander implements Runnable {
             logger.error(e.getMessage());
         }
     }
-
-
 }

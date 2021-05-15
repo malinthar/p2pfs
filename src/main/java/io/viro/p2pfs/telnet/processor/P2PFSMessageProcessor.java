@@ -128,10 +128,10 @@ public class P2PFSMessageProcessor {
             this.client.triggerSearch(searchRequestDTO);
 
             this.client.getNode().incReceivedSearchRequestCount();
-            Util.println("--------------------------performance_Received_Count--------------------------");
-            Util.println("Received a search Request, total count is : " +
-                    this.client.getNode().getReceivedSearchRequestCount());
-            Util.println("-------------------------------------------------------------------------------");
+//            Util.println("--------------------------performance_Received_Count--------------------------");
+//            Util.println("Received a search Request, total count is : " +
+//                    this.client.getNode().getReceivedSearchRequestCount());
+//            Util.println("-------------------------------------------------------------------------------");
 
         } else if (response instanceof SearchResponseReceived) {
             //logger.debug("Search response received from " + sender.getHost());
@@ -182,7 +182,7 @@ public class P2PFSMessageProcessor {
                     Constant.NODE_ALIVE));
         } else if (response instanceof HeartbeatResponse) {
             HeartbeatResponse res = (HeartbeatResponse) response;
-            logger.info("Heartbeat Response received from " + res.getSender().getHost());
+            //logger.info("Heartbeat Response received from " + res.getSender().getHost());
             if (res.getCode() == Constant.NODE_ALIVE) {
                 this.client.removeNodeFromHeartBeatList(res.getSender());
             }

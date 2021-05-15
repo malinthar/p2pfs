@@ -10,7 +10,7 @@ import java.util.List;
 
 
 /**
- * Commander thead.
+ * Commander Thread.
  */
 public class HeartBeatGenerator implements Runnable {
     private P2PFSClient client;
@@ -44,6 +44,7 @@ public class HeartBeatGenerator implements Runnable {
                 } else {
                     //ungracefully departure
                     this.removeRoutineList.add(nodeCredentials);
+                    this.client.removeNodeFromHeartBeatList(nodeCredentials);
                     logger.info("Node " + nodeCredentials.getHost() + "has ungracefully left!");
                 }
             }
@@ -61,7 +62,8 @@ public class HeartBeatGenerator implements Runnable {
                 } else {
                     //ungracefully departure
                     this.removeCachingList.add(nodeCredentials);
-                    logger.info("Node " + nodeCredentials.getHost() + "has ungracefully left!");
+                    this.client.removeNodeFromHeartBeatList(nodeCredentials);
+                    //logger.info("Node " + nodeCredentials.getHost() + "has ungracefully left!");
                 }
             }
             for (NodeCredentials nodeCredentials : this.removeCachingList) {
