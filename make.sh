@@ -24,5 +24,5 @@ for i in {1..12}
 
 	gnome-terminal --tab -- /bin/bash -c "java -jar target/io.viro.p2pfs-1.0-SNAPSHOT.jar 127.0.0.${i} 500${i} node${i} localhost 55555 ${status}"
 	echo "Node ${i} created in new tab"
-	sleep 1;
+	sleep 2.5;
  done
