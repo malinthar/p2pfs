@@ -43,6 +43,11 @@ public class P2PFSCommander implements Runnable {
                 BootstrapNode.triggerSearchQueries(this.client, BootstrapNode.searchQueries);
                 logger.info("Node " + this.client.getNode().getCredentials().getHost() + " search re initialized!");
             }
+            if (command.substring(0,6).equalsIgnoreCase("search")) {
+                String keyword = command.split("-")[1];
+                logger.info("external search re initialized : " + keyword);
+                this.client.initNewSearch(keyword);
+            }
             logger.info("Node " + this.client.getNode().getCredentials().getHost() +
                     " received command line input");
         }
